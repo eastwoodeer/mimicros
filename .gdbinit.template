@@ -1,0 +1,3 @@
+set architecture aarch64
+gef-remote --qemu-user --qemu-binary remote-target 127.0.0.1 1234
+file remote-target

@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 aarch64-cpu = "9.4.0"
+tock-registers = "0.8"
+bitflags = "2.4"
