@@ -8,10 +8,10 @@ use core::arch::{asm, global_asm};
 #[link_section = ".boot.stack"]
 static mut BOOT_STACK: [u8; 40960] = [0; 40960];
 
-#[link_section = ".data.stack"]
+#[link_section = ".data.boot_pgtable"]
 static mut BOOT_PGTABLE_L0: [PTE; 512] = [PTE::empty(); 512];
 
-#[link_section = ".data.stack"]
+#[link_section = ".data.boot_pgtable"]
 static mut BOOT_PGTABLE_L1: [PTE; 512] = [PTE::empty(); 512];
 
 global_asm!(

@@ -1,4 +1,4 @@
-TARGET := aarch64-unknown-none
+TARGET := aarch64-unknown-none-softfloat
 MODE := release
 KERNEL_ELF := target/$(TARGET)/$(MODE)/mimicros
 KERNEL_BIN := $(KERNEL_ELF).bin

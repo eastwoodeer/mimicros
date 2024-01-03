@@ -14,8 +14,8 @@ _start:
     mov sp, x8
 
 	bl {switch_to_el1}
-	//bl {init_boot_page_table}
-	//bl {init_mmu}
+	bl {init_boot_page_table}
+	bl {init_mmu}
 	bl {enable_fp}
 
 //wait_for_zero_bss:

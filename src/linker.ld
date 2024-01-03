@@ -20,15 +20,15 @@ SECTIONS {
     . = 0x40000000;
 
     .boot_core_stack (NOLOAD) : {
-	    . += 0x80000;
+        . += 0x80000;
 
         __boot_core_stack_end = .;
-	} :segment_boot_core_stack
+    } :segment_boot_core_stack
 
     .text : {
         KEEP(*(.text._start))
         *(.text.boot)
-		*(.text*)
+        *(.text*)
         /* ${BOOT_OBJECTS} */
     } :segment_code
 
@@ -37,10 +37,12 @@ SECTIONS {
     boot_end = ABSOLUTE(.);
 
     .rodata : ALIGN(8) {
-	    *(.rodata*)
-	} :segment_code
+        *(.rodata*)
+    } :segment_code
 
-    .data : {
+    .data : ALIGN(4K) {
+        *(.data.boot_pgtable)
+        . = ALIGN(4K);
         *(.data*)
     }
 
@@ -49,8 +51,8 @@ SECTIONS {
         __bss_start = .;
         *(.bss*);
         . = ALIGN(16);
-		*(.bss.stack);
-		. = ALIGN(8);
+        *(.bss.stack);
+        . = ALIGN(8);
         __bss_ende = .;
     } :segment_data
 }
