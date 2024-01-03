@@ -3,10 +3,19 @@ MODE := release
 KERNEL_ELF := target/$(TARGET)/$(MODE)/mimicros
 KERNEL_BIN := $(KERNEL_ELF).bin
 
-QEMU_MACHINE := virt,gic-version=3,virtualization=on
-QEMU_CPU := cortex-a76
-QEMU_CPUS := 4
-QEMU_MEM := 1G
+PLATFORM ?= qemu_aarch64
+
+ifeq ($(PLATFORM), qemu_aarch64)
+	QEMU_MACHINE := virt,gic-version=3,virtualization=on
+	QEMU_CPU := cortex-a76
+	QEMU_CPUS := 4
+	QEMU_MEM := 4G
+else ifeq ($(PLATFORM), qemu_raspi3)
+	QEMU_MACHINE := raspi3b
+	QEMU_CPU := cortex-a72
+	QEMU_CPUS := 4
+	QEMU_MEM := 1G
+endif
 
 QEMU_OPTS := -machine $(QEMU_MACHINE) -cpu $(QEMU_CPU) -smp $(QEMU_CPUS) -m $(QEMU_MEM)
 QEMU_OPTS += -serial stdio -display none
@@ -24,9 +33,8 @@ clean:
 	cargo clean
 	rm -f .gdbinit
 
-
 kernel:
-	cargo build $(MODE_ARG)
+	RUSTFLAGS=-Clink-arg=-Tsrc/platform/$(PLATFORM)/linker.ld cargo build $(MODE_ARG)
 
 $(KERNEL_BIN): kernel
 	rust-objcopy $(KERNEL_ELF) --binary-architecture=aarch64 --strip-all -O binary $(KERNEL_BIN)

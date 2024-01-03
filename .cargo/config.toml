@@ -1,7 +1,2 @@
 [build]
 target = "aarch64-unknown-none-softfloat"
-
-[target.aarch64-unknown-none-softfloat]
-rustflags = [
-  "-Clink-arg=-Tsrc/linker.ld"
-]

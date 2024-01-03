@@ -5,7 +5,7 @@
 use aarch64_cpu::registers::*;
 use core::panic::PanicInfo;
 
-mod boot;
+mod platform;
 mod console;
 mod cpu;
 mod exception;
