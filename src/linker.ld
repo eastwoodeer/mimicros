@@ -22,7 +22,7 @@ SECTIONS {
     .boot_core_stack (NOLOAD) : {
         . += 0x80000;
 
-        __boot_core_stack_end = .;
+        __boot_stack_end = .;
     } :segment_boot_core_stack
 
     .text : {
@@ -53,6 +53,6 @@ SECTIONS {
         . = ALIGN(16);
         *(.bss.stack);
         . = ALIGN(8);
-        __bss_ende = .;
+        __bss_end = .;
     } :segment_data
 }

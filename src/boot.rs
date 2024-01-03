@@ -3,40 +3,31 @@ use tock_registers::interfaces::{ReadWriteable, Readable, Writeable};
 
 use crate::pagetable::{MemoryAttr, PhysAddr, VirtAddr, PTE};
 
-use core::arch::{asm, global_asm};
-
-#[link_section = ".boot.stack"]
-static mut BOOT_STACK: [u8; 40960] = [0; 40960];
-
 #[link_section = ".data.boot_pgtable"]
 static mut BOOT_PGTABLE_L0: [PTE; 512] = [PTE::empty(); 512];
 
 #[link_section = ".data.boot_pgtable"]
 static mut BOOT_PGTABLE_L1: [PTE; 512] = [PTE::empty(); 512];
 
-global_asm!(
+core::arch::global_asm!(
     include_str!("boot.s"),
     CONST_CORE_ID_MASK = const 0b11,
     init_boot_page_table = sym init_boot_page_table,
     init_mmu = sym init_mmu,
     switch_to_el1 = sym switch_to_el1,
-    enable_fp = sym enable_fp,
-    boot_stack = sym BOOT_STACK);
+    enable_fp = sym enable_fp);
 
-unsafe fn _init_boot_page_table(
-    boot_pgtable_l0: &mut [PTE; 512],
-    boot_pgtable_l1: &mut [PTE; 512],
-) {
-    boot_pgtable_l0[0] = PTE::new_table(PhysAddr::from(boot_pgtable_l1.as_ptr() as usize));
+unsafe fn init_boot_page_table() {
+    BOOT_PGTABLE_L0[0] = PTE::new_table(PhysAddr::from(BOOT_PGTABLE_L1.as_ptr() as usize));
     // 0 ~ 0x4000_0000 1G block device memory
-    boot_pgtable_l1[0] = PTE::new_page(
+    BOOT_PGTABLE_L1[0] = PTE::new_page(
         PhysAddr::from(0),
         MemoryAttr::READ | MemoryAttr::WRITE | MemoryAttr::DEVICE,
         true,
     );
 
     // 0x4000_0000 ~ 0x8000_0000 1G block normal memory
-    boot_pgtable_l1[1] = PTE::new_page(
+    BOOT_PGTABLE_L1[1] = PTE::new_page(
         PhysAddr::from(0x4000_0000),
         MemoryAttr::READ | MemoryAttr::WRITE | MemoryAttr::EXECUTE,
         true,
@@ -51,10 +42,10 @@ unsafe fn _init_boot_page_table(
 pub fn flush_tlb(vaddr: Option<VirtAddr>) {
     unsafe {
         if let Some(vaddr) = vaddr {
-            asm!("tlbi vaae1is, {}; dsb sy; isb", in(reg) vaddr.as_usize())
+            core::arch::asm!("tlbi vaae1is, {}; dsb sy; isb", in(reg) vaddr.as_usize())
         } else {
             // flush the entire TLB
-            asm!("tlbi vmalle1; dsb sy; isb")
+            core::arch::asm!("tlbi vmalle1; dsb sy; isb")
         }
     }
 }
@@ -94,10 +85,6 @@ unsafe fn init_mmu() {
     // Enable the MMU and turn on I-cache and D-cache
     SCTLR_EL1.modify(SCTLR_EL1::M::Enable + SCTLR_EL1::C::Cacheable + SCTLR_EL1::I::Cacheable);
     barrier::isb(barrier::SY);
-}
-
-unsafe fn init_boot_page_table() {
-    _init_boot_page_table(&mut BOOT_PGTABLE_L0, &mut BOOT_PGTABLE_L1);
 }
 
 fn switch_to_el1() {
