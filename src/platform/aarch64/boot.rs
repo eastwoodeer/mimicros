@@ -18,20 +18,24 @@ core::arch::global_asm!(
     enable_fp = sym enable_fp);
 
 unsafe fn init_boot_page_table() {
-    BOOT_PGTABLE_L0[0] = PTE::new_table(PhysAddr::from(BOOT_PGTABLE_L1.as_ptr() as usize));
-    // 0 ~ 0x4000_0000 1G block device memory
-    BOOT_PGTABLE_L1[0] = PTE::new_page(
-        PhysAddr::from(0),
-        MemoryAttr::READ | MemoryAttr::WRITE | MemoryAttr::DEVICE,
-        true,
+    crate::platform::qemu_aarch64::mem::init_boot_page_table(
+        &mut BOOT_PGTABLE_L0,
+        &mut BOOT_PGTABLE_L1,
     );
+    // BOOT_PGTABLE_L0[0] = PTE::new_table(PhysAddr::from(BOOT_PGTABLE_L1.as_ptr() as usize));
+    // // 0 ~ 0x4000_0000 1G block device memory
+    // BOOT_PGTABLE_L1[0] = PTE::new_page(
+    //     PhysAddr::from(0),
+    //     MemoryAttr::READ | MemoryAttr::WRITE | MemoryAttr::DEVICE,
+    //     true,
+    // );
 
-    // 0x4000_0000 ~ 0x8000_0000 1G block normal memory
-    BOOT_PGTABLE_L1[1] = PTE::new_page(
-        PhysAddr::from(0x4000_0000),
-        MemoryAttr::READ | MemoryAttr::WRITE | MemoryAttr::EXECUTE,
-        true,
-    );
+    // // 0x4000_0000 ~ 0x8000_0000 1G block normal memory
+    // BOOT_PGTABLE_L1[1] = PTE::new_page(
+    //     PhysAddr::from(0x4000_0000),
+    //     MemoryAttr::READ | MemoryAttr::WRITE | MemoryAttr::EXECUTE,
+    //     true,
+    // );
 }
 
 /// Flushes the TLB.

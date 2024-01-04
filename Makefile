@@ -27,6 +27,8 @@ ifeq ($(MODE), release)
 	MODE_ARG := --release
 endif
 
+export RUSTFLAGS=-Clink-arg=-Tsrc/platform/$(PLATFORM)/linker.ld
+
 all: $(KERNEL_BIN)
 
 clean:
@@ -34,7 +36,7 @@ clean:
 	rm -f .gdbinit
 
 kernel:
-	RUSTFLAGS=-Clink-arg=-Tsrc/platform/$(PLATFORM)/linker.ld cargo build $(MODE_ARG)
+	cargo build $(MODE_ARG)
 
 $(KERNEL_BIN): kernel
 	rust-objcopy $(KERNEL_ELF) --binary-architecture=aarch64 --strip-all -O binary $(KERNEL_BIN)

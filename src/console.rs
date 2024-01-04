@@ -7,7 +7,6 @@ impl Write for Stdout {
         for c in s.chars() {
             // 0x3F20_1000 raspi3b
             // unsafe { core::ptr::write_volatile(0x3F20_1000 as *mut u8, c as u8) }
-            // 0x0900_0000 virt
             unsafe { core::ptr::write_volatile(0x0900_0000 as *mut u8, c as u8) }
         }
 
