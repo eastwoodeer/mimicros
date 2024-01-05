@@ -4,8 +4,13 @@ TARGET_DIR := "target" / TARGET / MODE
 KERNEL_ELF :=  TARGET_DIR / "mimicros"
 KERNEL_BIN := KERNEL_ELF + ".bin"
 
+alias r := run
+
 default:
 	make
+
+run:
+	make run
 
 kernel:
 	cargo build --release

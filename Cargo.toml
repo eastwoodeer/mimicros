@@ -1,3 +1,4 @@
+workspace = { members = [ "crates/memory_addr", "crates/page_table_entry"] }
 [package]
 name = "mimicros"
 version = "0.1.0"
@@ -9,3 +10,6 @@ edition = "2021"
 aarch64-cpu = "9.4.0"
 tock-registers = "0.8"
 bitflags = "2.4"
+
+memory_addr = { path = "crates/memory_addr" }
+page_table_entry = { path = "crates/page_table_entry" }

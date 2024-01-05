@@ -1,24 +1,45 @@
-bitflags::bitflags! {
-    #[derive(Debug)]
-    pub struct MemoryAttr: usize {
-        /// the memory is readable.
-        const READ    = 1 << 0;
-        /// the memory is writable.
-        const WRITE   = 1 << 1;
-        /// the memory is executable.
-        const EXECUTE = 1 << 2;
-        /// the memory is user accessible.
-        const USER    = 1 << 3;
-        /// the memory is device memory.
-        const DEVICE  = 1 << 4;
-    }
-}
+use memory_addr::PhysAddr;
+use crate::MemoryAttr;
 
 #[repr(u64)]
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 enum MemoryType {
     Device = 0,
     Normal = 1,
+}
+
+
+impl From<MemoryAttr> for DescriptorAttr {
+    fn from(memory_attr: MemoryAttr) -> Self {
+        let mut attr = if memory_attr.contains(MemoryAttr::DEVICE) {
+            Self::from_memory_type(MemoryType::Device)
+        } else {
+            Self::from_memory_type(MemoryType::Normal)
+        };
+
+        if memory_attr.contains(MemoryAttr::READ) {
+            attr |= Self::VALID;
+        }
+
+        if !memory_attr.contains(MemoryAttr::WRITE) {
+            attr |= Self::AP_RO;
+        }
+
+        if memory_attr.contains(MemoryAttr::USER) {
+            attr |= Self::AP_EL0 | Self::PXN;
+
+            if !memory_attr.contains(MemoryAttr::EXECUTE) {
+                attr |= Self::UXN;
+            }
+        } else {
+            attr |= Self::UXN;
+            if !memory_attr.contains(MemoryAttr::EXECUTE) {
+                attr |= Self::PXN;
+            }
+        }
+
+        attr
+    }
 }
 
 bitflags::bitflags! {
@@ -66,65 +87,6 @@ impl DescriptorAttr {
     }
 }
 
-impl From<MemoryAttr> for DescriptorAttr {
-    fn from(memory_attr: MemoryAttr) -> Self {
-        let mut attr = if memory_attr.contains(MemoryAttr::DEVICE) {
-            Self::from_memory_type(MemoryType::Device)
-        } else {
-            Self::from_memory_type(MemoryType::Normal)
-        };
-
-        if memory_attr.contains(MemoryAttr::READ) {
-            attr |= Self::VALID;
-        }
-
-        if !memory_attr.contains(MemoryAttr::WRITE) {
-            attr |= Self::AP_RO;
-        }
-
-        if memory_attr.contains(MemoryAttr::USER) {
-            attr |= Self::AP_EL0 | Self::PXN;
-
-            if !memory_attr.contains(MemoryAttr::EXECUTE) {
-                attr |= Self::UXN;
-            }
-        } else {
-            attr |= Self::UXN;
-            if !memory_attr.contains(MemoryAttr::EXECUTE) {
-                attr |= Self::PXN;
-            }
-        }
-
-        attr
-    }
-}
-
-pub struct PhysAddr(usize);
-
-impl PhysAddr {
-    #[inline]
-    pub const fn from(addr: usize) -> Self {
-        Self(addr)
-    }
-
-    #[inline]
-    pub const fn as_usize(self) -> usize {
-        self.0
-    }
-}
-
-pub struct VirtAddr(usize);
-impl VirtAddr {
-    #[inline]
-    pub const fn from(addr: usize) -> Self {
-        Self(addr)
-    }
-
-    #[inline]
-    pub const fn as_usize(self) -> usize {
-        self.0
-    }
-}
 
 #[derive(Copy, Clone)]
 pub struct PTE(u64);

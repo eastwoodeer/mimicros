@@ -1,7 +1,8 @@
 use aarch64_cpu::{asm, asm::barrier, registers::*};
 use tock_registers::interfaces::{ReadWriteable, Readable, Writeable};
 
-use crate::pagetable::{MemoryAttr, PhysAddr, VirtAddr, PTE};
+use memory_addr::{PhysAddr, VirtAddr};
+use page_table_entry::aarch64::PTE;
 
 #[link_section = ".data.boot_pgtable"]
 static mut BOOT_PGTABLE_L0: [PTE; 512] = [PTE::empty(); 512];
@@ -22,20 +23,6 @@ unsafe fn init_boot_page_table() {
         &mut BOOT_PGTABLE_L0,
         &mut BOOT_PGTABLE_L1,
     );
-    // BOOT_PGTABLE_L0[0] = PTE::new_table(PhysAddr::from(BOOT_PGTABLE_L1.as_ptr() as usize));
-    // // 0 ~ 0x4000_0000 1G block device memory
-    // BOOT_PGTABLE_L1[0] = PTE::new_page(
-    //     PhysAddr::from(0),
-    //     MemoryAttr::READ | MemoryAttr::WRITE | MemoryAttr::DEVICE,
-    //     true,
-    // );
-
-    // // 0x4000_0000 ~ 0x8000_0000 1G block normal memory
-    // BOOT_PGTABLE_L1[1] = PTE::new_page(
-    //     PhysAddr::from(0x4000_0000),
-    //     MemoryAttr::READ | MemoryAttr::WRITE | MemoryAttr::EXECUTE,
-    //     true,
-    // );
 }
 
 /// Flushes the TLB.
