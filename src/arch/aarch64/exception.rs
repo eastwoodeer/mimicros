@@ -9,10 +9,6 @@ fn invalid_exception(tf: u64, kind: u64, source: u64) {
     panic!("Invalid exception {} from {}, tr: {}", kind, source, tf);
 }
 
-extern "C" {
-    fn exception_vector_base();
-}
-
-pub fn exception_init() {
-    VBAR_EL1.set(exception_vector_base as usize as _);
+pub fn exception_init(vbar_el1: usize) {
+    VBAR_EL1.set(vbar_el1 as _);
 }

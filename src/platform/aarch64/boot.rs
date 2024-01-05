@@ -16,7 +16,8 @@ core::arch::global_asm!(
     init_boot_page_table = sym init_boot_page_table,
     init_mmu = sym init_mmu,
     switch_to_el1 = sym switch_to_el1,
-    enable_fp = sym enable_fp);
+    enable_fp = sym enable_fp,
+    rust_start_main = sym crate::platform::rust_start_main);
 
 unsafe fn init_boot_page_table() {
     crate::platform::qemu_aarch64::mem::init_boot_page_table(
@@ -118,9 +119,4 @@ fn switch_to_el1() {
 fn enable_fp() {
     CPACR_EL1.write(CPACR_EL1::FPEN::TrapNothing);
     barrier::isb(barrier::SY);
-}
-
-#[no_mangle]
-pub fn _start_rust() -> ! {
-    crate::kernel_init()
 }
