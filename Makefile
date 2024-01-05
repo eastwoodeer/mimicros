@@ -35,6 +35,9 @@ clean:
 	cargo clean
 	rm -f .gdbinit
 
+format:
+	cargo fmt
+
 kernel:
 	cargo build $(MODE_ARG)
 

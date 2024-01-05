@@ -1,5 +1,5 @@
-use memory_addr::PhysAddr;
 use crate::MemoryAttr;
+use memory_addr::PhysAddr;
 
 #[repr(u64)]
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
@@ -7,7 +7,6 @@ enum MemoryType {
     Device = 0,
     Normal = 1,
 }
-
 
 impl From<MemoryAttr> for DescriptorAttr {
     fn from(memory_attr: MemoryAttr) -> Self {
@@ -86,7 +85,6 @@ impl DescriptorAttr {
         Self::from_bits_retain(bits)
     }
 }
-
 
 #[derive(Copy, Clone)]
 pub struct PTE(u64);

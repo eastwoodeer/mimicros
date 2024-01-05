@@ -1,5 +1,5 @@
-use page_table_entry::{MemoryAttr, aarch64::PTE};
 use memory_addr::PhysAddr;
+use page_table_entry::{aarch64::PTE, MemoryAttr};
 
 pub unsafe fn init_boot_page_table(
     boot_pgtable_l0: &mut [PTE; 512],

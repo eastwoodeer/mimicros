@@ -1,8 +1,8 @@
 #![no_std]
 
-use core::fmt::Debug;
-
 pub mod aarch64;
+
+use core::fmt::Debug;
 
 bitflags::bitflags! {
     #[derive(Debug)]

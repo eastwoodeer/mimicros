@@ -2,12 +2,12 @@
 #![no_main]
 #![feature(asm_const)]
 
-use core::panic::PanicInfo;
-
 mod arch;
-mod platform;
 mod console;
 mod cpu;
+mod platform;
+
+use core::panic::PanicInfo;
 
 fn kernel_init() -> ! {
     crate::arch::aarch64::exception::exception_init();

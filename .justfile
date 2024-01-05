@@ -5,12 +5,16 @@ KERNEL_ELF :=  TARGET_DIR / "mimicros"
 KERNEL_BIN := KERNEL_ELF + ".bin"
 
 alias r := run
+alias f := fmt
 
 default:
 	make
 
 run:
 	make run
+
+fmt:
+	make format
 
 kernel:
 	cargo build --release
