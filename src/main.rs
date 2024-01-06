@@ -5,6 +5,7 @@
 mod arch;
 mod console;
 mod cpu;
+mod mem;
 mod platform;
 
 use core::panic::PanicInfo;
