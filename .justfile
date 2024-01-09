@@ -1,4 +1,4 @@
-TARGET := "aarch64-unknown-none"
+TARGET := "aarch64-unknown-none-softfloat"
 MODE := "release"
 TARGET_DIR := "target" / TARGET / MODE
 KERNEL_ELF :=  TARGET_DIR / "mimicros"

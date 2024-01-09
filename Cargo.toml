@@ -13,3 +13,4 @@ bitflags = "2.4"
 
 memory_addr = { path = "crates/memory_addr" }
 page_table_entry = { path = "crates/page_table_entry" }
+allocator = { path = "crates/allocator" }

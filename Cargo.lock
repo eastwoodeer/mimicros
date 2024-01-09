@@ -30,6 +30,7 @@ name = "mimicros"
 version = "0.1.0"
 dependencies = [
  "aarch64-cpu",
+ "allocator",
  "bitflags",
  "memory_addr",
  "page_table_entry",
