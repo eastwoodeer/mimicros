@@ -34,6 +34,7 @@ dependencies = [
  "bitflags",
  "memory_addr",
  "page_table_entry",
+ "spinlock",
  "tock-registers",
 ]
 
@@ -44,6 +45,10 @@ dependencies = [
  "bitflags",
  "memory_addr",
 ]
+
+[[package]]
+name = "spinlock"
+version = "0.1.0"
 
 [[package]]
 name = "tock-registers"

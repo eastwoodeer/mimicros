@@ -1,4 +1,11 @@
-workspace = { members = [ "crates/allocator", "crates/memory_addr", "crates/page_table_entry"] }
+[workspace]
+members = [
+  "crates/allocator",
+  "crates/memory_addr",
+  "crates/page_table_entry",
+  "crates/spinlock"
+]
+
 [package]
 name = "mimicros"
 version = "0.1.0"
@@ -14,3 +21,4 @@ bitflags = "2.4"
 memory_addr = { path = "crates/memory_addr" }
 page_table_entry = { path = "crates/page_table_entry" }
 allocator = { path = "crates/allocator" }
+spinlock = { path = "crates/spinlock" }
