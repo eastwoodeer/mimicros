@@ -1,6 +1,6 @@
 use crate::println;
 
-use allocator;
+use allocator::buddy::Heap;
 
 use core::alloc::Layout;
 
@@ -15,7 +15,7 @@ pub extern "C" fn rust_start_main(cpuid: usize) {
     crate::arch::aarch64::exception::exception_init(exception_vector_base as usize);
 
     let mem: [usize; 4096] = [0; 4096];
-    let mut heap = allocator::Heap::<64>::new();
+    let mut heap = Heap::<64>::new();
     unsafe {
         heap.add_to_heap(mem.as_ptr() as usize, mem.as_ptr().add(1024) as usize);
     }
