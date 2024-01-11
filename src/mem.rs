@@ -12,3 +12,9 @@ pub fn clear_bss() {
         ).fill(0);
     }
 }
+
+pub fn init_allocator() {
+    crate::println!("init allocator at {:#x}, size: {:#x}", __bss_end as usize, 10*1024*1024);
+
+    allocator::global_init(__bss_end as usize, 10*1024*1024);
+}

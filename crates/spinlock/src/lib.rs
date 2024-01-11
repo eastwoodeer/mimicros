@@ -29,7 +29,7 @@ pub struct SpinGuard<'a, T> {
 }
 
 impl<T> SpinLock<T> {
-    pub fn new(v: T) -> Self {
+    pub const fn new(v: T) -> Self {
         Self {
             locked: AtomicBool::new(false),
             value: UnsafeCell::new(v),

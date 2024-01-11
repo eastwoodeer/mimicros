@@ -18,14 +18,6 @@ _start:
     bl {init_mmu}
     bl {enable_fp}
 
-wait_for_zero_bss:
-    adr x21, __bss_start
-    adr x22, __bss_end
-    cmp x21, x22
-    b.eq prepare_rust
-    stp xzr, xzr, [x21], 16
-    b wait_for_zero_bss
-
 prepare_rust:
     mov x0, x19
     ldr x8, ={rust_start_main}

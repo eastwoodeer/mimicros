@@ -1,5 +1,6 @@
 use core::fmt;
 use core::marker::PhantomData;
+use core::marker::Send;
 use core::option::Option::{self, *};
 use core::ptr;
 
@@ -7,6 +8,8 @@ use core::ptr;
 pub struct LinkedList {
     head: *mut usize,
 }
+
+unsafe impl Send for LinkedList {}
 
 pub struct Iter<'a> {
     current: *mut usize,

@@ -10,9 +10,13 @@ use core::ptr::NonNull;
 use core::result::Result::{self, Err, Ok};
 
 pub struct Heap<const ORDER: usize> {
-    pub free_list: [linked_list::LinkedList; ORDER],
+    free_list: [linked_list::LinkedList; ORDER],
     allocated: usize,
     total: usize,
+}
+
+pub struct BuddyAllocator {
+    inner: Heap<64>,
 }
 
 pub fn prev_power_of_two(n: usize) -> usize {
@@ -26,6 +30,14 @@ impl<const ORDER: usize> Heap<ORDER> {
             allocated: 0,
             total: 0,
         }
+    }
+
+    pub fn allocated_bytes(&self) -> usize {
+        self.allocated
+    }
+
+    pub fn total_bytes(&self) -> usize {
+        self.total
     }
 
     pub fn add_to_heap(&mut self, mut start: usize, mut end: usize) {
@@ -138,6 +150,50 @@ impl<const ORDER: usize> fmt::Debug for Heap<ORDER> {
         f.debug_struct("Heap")
             .field("allocated", &self.allocated)
             .field("total", &self.total)
+            .finish()
+    }
+}
+
+#[derive(Debug)]
+pub enum AllocError {
+    InvalidParam,
+    NoMemory,
+}
+
+pub type AllocResult<T = ()> = Result<T, AllocError>;
+
+impl BuddyAllocator {
+    pub const fn new() -> Self {
+        Self {
+            inner: Heap::<64>::new(),
+        }
+    }
+
+    pub fn add_memory(&mut self, start: usize, size: usize) {
+        self.inner.add_to_heap(start, start + size);
+    }
+
+    pub fn alloc(&mut self, layout: Layout) -> AllocResult<NonNull<u8>> {
+        self.inner.alloc(layout).map_err(|_| AllocError::NoMemory)
+    }
+
+    pub fn dealloc(&mut self, ptr: NonNull<u8>, layout: Layout) {
+        self.inner.dealloc(ptr, layout)
+    }
+
+    pub fn used_bytes(&self) -> usize {
+        self.inner.allocated_bytes()
+    }
+
+    pub fn available_bytes(&self) -> usize {
+        self.inner.total_bytes() - self.inner.allocated_bytes()
+    }
+}
+
+impl fmt::Debug for BuddyAllocator {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("BuddyAllocator")
+            .field("Heap", &self.inner)
             .finish()
     }
 }
