@@ -6,6 +6,7 @@ KERNEL_BIN := KERNEL_ELF + ".bin"
 
 alias r := run
 alias f := fmt
+alias c := clean
 
 default:
 	make
@@ -15,6 +16,9 @@ run:
 
 fmt:
 	make format
+
+clean:
+	make clean
 
 kernel:
 	cargo build --release
