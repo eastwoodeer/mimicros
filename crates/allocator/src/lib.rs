@@ -1,9 +1,10 @@
 #![cfg_attr(not(test), no_std)]
 
+#[macro_use]
+extern crate log;
+
 pub mod buddy;
 mod linked_list;
-
-use ::println;
 
 use core::alloc::{GlobalAlloc, Layout};
 use core::ptr::NonNull;
@@ -46,5 +47,6 @@ unsafe impl GlobalAlloc for GlobalAllocator {
 static GLOBAL_ALLOCATOR: GlobalAllocator = GlobalAllocator::new();
 
 pub fn global_init(start: usize, size: usize) {
+    info!("start at {:#x}, size {:#x}", start, size);
     GLOBAL_ALLOCATOR.init(start, size);
 }

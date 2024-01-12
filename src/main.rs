@@ -2,6 +2,9 @@
 #![no_main]
 #![feature(asm_const)]
 
+#[macro_use]
+extern crate log;
+
 mod arch;
 mod console;
 mod cpu;

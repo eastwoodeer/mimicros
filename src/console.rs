@@ -1,4 +1,5 @@
 use core::fmt::{self, Write};
+use core::result::Result::Ok;
 
 struct Stdout;
 

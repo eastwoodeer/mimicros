@@ -4,7 +4,7 @@ extern "C" {
 }
 
 pub fn clear_bss() {
-    crate::println!("bss start 0x{:x}, end: 0x{:x}", __bss_start as usize, __bss_end as usize);
+    // crate::println!("bss start 0x{:x}, end: 0x{:x}", __bss_start as usize, __bss_end as usize);
     unsafe {
         core::slice::from_raw_parts_mut(
             __bss_start as *mut u8,
@@ -14,7 +14,5 @@ pub fn clear_bss() {
 }
 
 pub fn init_allocator() {
-    crate::println!("init allocator at {:#x}, size: {:#x}", __bss_end as usize, 10*1024*1024);
-
     allocator::global_init(__bss_end as usize, 10*1024*1024);
 }
