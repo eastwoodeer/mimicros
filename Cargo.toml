@@ -3,8 +3,9 @@ members = [
   "crates/allocator",
   "crates/logger",
   "crates/memory_addr",
+  "crates/page_table",
   "crates/page_table_entry",
-  "crates/spinlock"
+  "crates/spinlock",
 ]
 
 [package]
