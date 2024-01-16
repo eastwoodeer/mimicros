@@ -1,3 +1,7 @@
+use memory_addr::{PhysAddr, VirtAddr};
+use page_table::PageSize;
+use page_table_entry::MemoryAttribute;
+
 extern "C" {
     fn exception_vector_base();
 }
@@ -17,6 +21,17 @@ pub extern "C" fn rust_start_main(cpuid: usize) {
     info!("{}", LOGO);
     info!("boot cpuid: {}", cpuid);
     crate::mem::init_allocator();
+    let mut pgt = page_table::bits64::PageTable64::new();
+    // pgt.map(
+    //     VirtAddr::from(0x100000000),
+    //     PhysAddr::from(0x50000000),
+    //     PageSize::Size4K,
+    //     MemoryAttribute::READ | MemoryAttribute::WRITE,
+    // ).expect("should be ok...");
+
+	// unsafe {
+	// 	core::ptr::write_volatile(0x100000000 as *mut u8, b'A');
+	// }
 
     error!("panic here, it's ok");
     panic!("ends here");

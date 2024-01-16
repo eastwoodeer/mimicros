@@ -6,7 +6,7 @@ use core::fmt::Debug;
 
 bitflags::bitflags! {
     #[derive(Debug)]
-    pub struct MemoryAttr: usize {
+    pub struct MemoryAttribute: usize {
         /// the memory is readable.
         const READ    = 1 << 0;
         /// the memory is writable.

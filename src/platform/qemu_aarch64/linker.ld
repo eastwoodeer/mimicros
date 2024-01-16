@@ -1,6 +1,8 @@
-ENTRY(0x40080000)
+OUTPUT_ARCH(aarch64)
 
-BASE_ADDRESS = 0x40000000;
+ENTRY(_start)
+
+BASE_ADDRESS = 0xFFFF000040000000;
 
 /* Flags:
  *     4 == R
@@ -17,7 +19,7 @@ PHDRS {
 }
 
 SECTIONS {
-    . = 0x40000000;
+    . = BASE_ADDRESS;
 
     .boot_core_stack (NOLOAD) : {
         . += 0x80000;

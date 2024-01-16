@@ -1,4 +1,6 @@
-use crate::MemoryAttr;
+use core::fmt;
+
+use crate::MemoryAttribute;
 use memory_addr::PhysAddr;
 
 #[repr(u64)]
@@ -8,31 +10,31 @@ enum MemoryType {
     Normal = 1,
 }
 
-impl From<MemoryAttr> for DescriptorAttr {
-    fn from(memory_attr: MemoryAttr) -> Self {
-        let mut attr = if memory_attr.contains(MemoryAttr::DEVICE) {
+impl From<MemoryAttribute> for DescriptorAttr {
+    fn from(memory_attr: MemoryAttribute) -> Self {
+        let mut attr = if memory_attr.contains(MemoryAttribute::DEVICE) {
             Self::from_memory_type(MemoryType::Device)
         } else {
             Self::from_memory_type(MemoryType::Normal)
         };
 
-        if memory_attr.contains(MemoryAttr::READ) {
+        if memory_attr.contains(MemoryAttribute::READ) {
             attr |= Self::VALID;
         }
 
-        if !memory_attr.contains(MemoryAttr::WRITE) {
+        if !memory_attr.contains(MemoryAttribute::WRITE) {
             attr |= Self::AP_RO;
         }
 
-        if memory_attr.contains(MemoryAttr::USER) {
+        if memory_attr.contains(MemoryAttribute::USER) {
             attr |= Self::AP_EL0 | Self::PXN;
 
-            if !memory_attr.contains(MemoryAttr::EXECUTE) {
+            if !memory_attr.contains(MemoryAttribute::EXECUTE) {
                 attr |= Self::UXN;
             }
         } else {
             attr |= Self::UXN;
-            if !memory_attr.contains(MemoryAttr::EXECUTE) {
+            if !memory_attr.contains(MemoryAttribute::EXECUTE) {
                 attr |= Self::PXN;
             }
         }
@@ -90,25 +92,51 @@ impl DescriptorAttr {
 pub struct PTE(u64);
 
 impl PTE {
-    const ADDR_MASK: usize = 0x0000_FFFF_FFFF_F000; // 12..48
+    const PHYS_ADDR_MASK: u64 = 0x0000_FFFF_FFFF_F000; // 12..48
 
     pub const fn empty() -> Self {
         Self(0)
     }
+
+    pub fn is_unused(&self) -> bool {
+        self.0 == 0
+    }
+
+    pub fn is_valid(&self) -> bool {
+        DescriptorAttr::from_bits_truncate(self.0).contains(DescriptorAttr::VALID)
+    }
+
+    pub fn is_huge(&self) -> bool {
+        !DescriptorAttr::from_bits_truncate(self.0).contains(DescriptorAttr::NON_BLOCK)
+    }
+
+    pub fn paddr(&self) -> PhysAddr {
+        PhysAddr::from((self.0 & PTE::PHYS_ADDR_MASK) as usize)
+    }
 }
 
 impl PTE {
-    pub fn new_page(paddr: PhysAddr, attr: MemoryAttr, is_huge: bool) -> Self {
+    pub fn new_page(paddr: PhysAddr, attr: MemoryAttribute, is_huge: bool) -> Self {
         let mut a: DescriptorAttr = DescriptorAttr::from(attr) | DescriptorAttr::AF;
         if !is_huge {
             a |= DescriptorAttr::NON_BLOCK;
         }
 
-        Self(a.bits() | (paddr.as_usize() & Self::ADDR_MASK) as u64)
+        Self(a.bits() | (paddr.as_usize() as u64 & Self::PHYS_ADDR_MASK) as u64)
     }
 
     pub fn new_table(paddr: PhysAddr) -> Self {
         let a: DescriptorAttr = DescriptorAttr::NON_BLOCK | DescriptorAttr::VALID;
-        Self(a.bits() | (paddr.as_usize() & Self::ADDR_MASK) as u64)
+        Self(a.bits() | (paddr.as_usize() as u64 & Self::PHYS_ADDR_MASK) as u64)
+    }
+}
+
+impl fmt::Debug for PTE {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut f = f.debug_struct("aarch64 PTE");
+        f.field("raw", &self.0)
+            .field("paddr", &self.paddr())
+            .field("attribute", &DescriptorAttr::from_bits_truncate(self.0))
+            .finish()
     }
 }

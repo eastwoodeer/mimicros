@@ -52,6 +52,7 @@ dependencies = [
  "log",
  "logger",
  "memory_addr",
+ "page_table",
  "page_table_entry",
  "spinlock",
  "tock-registers",
@@ -60,6 +61,12 @@ dependencies = [
 [[package]]
 name = "page_table"
 version = "0.1.0"
+dependencies = [
+ "allocator",
+ "log",
+ "memory_addr",
+ "page_table_entry",
+]
 
 [[package]]
 name = "page_table_entry"

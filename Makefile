@@ -21,7 +21,7 @@ QEMU_OPTS := -machine $(QEMU_MACHINE) -cpu $(QEMU_CPU) -smp $(QEMU_CPUS) -m $(QE
 QEMU_OPTS += -serial stdio -display none
 # QEMU_OPTS += -device loader,file=$(KERNEL_BIN),addr=0x3000000,force-raw=on
 # QEMU_OPTS += -kernel u-boot-aarch64
-QEMU_OPTS += -kernel $(KERNEL_ELF)
+QEMU_OPTS += -kernel $(KERNEL_BIN)
 
 ifeq ($(MODE), release)
 	MODE_ARG := --release
@@ -47,7 +47,7 @@ $(KERNEL_BIN): kernel
 objdump:
 	rust-objdump -S $(KERNEL_ELF) 2> /dev/null
 
-run: kernel
+run: $(KERNEL_BIN)
 	qemu-system-aarch64 $(QEMU_OPTS)
 
 .gdbinit: .gdbinit.template

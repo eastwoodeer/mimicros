@@ -22,6 +22,7 @@ bitflags = "2.4"
 log = "0.4"
 
 memory_addr = { path = "crates/memory_addr" }
+page_table = { path = "crates/page_table" }
 page_table_entry = { path = "crates/page_table_entry" }
 allocator = { path = "crates/allocator" }
 spinlock = { path = "crates/spinlock" }

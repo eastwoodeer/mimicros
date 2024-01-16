@@ -6,3 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+log = "0.4"
+
+allocator = { path = "../allocator" }
+memory_addr = { path = "../memory_addr" }
+page_table_entry = { path = "../page_table_entry" }

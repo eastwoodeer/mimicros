@@ -9,6 +9,8 @@ use core::option::Option::Some;
 use core::ptr::NonNull;
 use core::result::Result::{self, Err, Ok};
 
+use crate::{AllocError, AllocResult};
+
 pub struct Heap<const ORDER: usize> {
     free_list: [linked_list::LinkedList; ORDER],
     allocated: usize,
@@ -153,14 +155,6 @@ impl<const ORDER: usize> fmt::Debug for Heap<ORDER> {
             .finish()
     }
 }
-
-#[derive(Debug)]
-pub enum AllocError {
-    InvalidParam,
-    NoMemory,
-}
-
-pub type AllocResult<T = ()> = Result<T, AllocError>;
 
 impl BuddyAllocator {
     pub const fn new() -> Self {
