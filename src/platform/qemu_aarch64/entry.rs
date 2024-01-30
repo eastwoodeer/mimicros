@@ -1,5 +1,6 @@
 use memory_addr::{PhysAddr, VirtAddr};
-use page_table::PageSize;
+use page_table::bits64::PageTable64;
+use page_table::{PageSize, PagingError};
 use page_table_entry::MemoryAttribute;
 
 extern "C" {
@@ -13,6 +14,27 @@ const LOGO: &str = r#"
 | |  | || || | | | | || || (__ |  _ < | |_| | ___) |
 |_|  |_||_||_| |_| |_||_| \___||_| \_\ \___/ |____/
 "#;
+
+fn remap_kernel_memory() -> Result<(), PagingError> {
+    static mut KERNEL_PAGE_TABLE: PageTable64 = PageTable64::new();
+
+    unsafe {
+        KERNEL_PAGE_TABLE.memmap(
+            VirtAddr::from(0 + 0xFFFF0000_00000000),
+            PhysAddr::from(0),
+            1 * 1024 * 1024 * 1024,
+            MemoryAttribute::READ | MemoryAttribute::WRITE | MemoryAttribute::DEVICE,
+        )?;
+        KERNEL_PAGE_TABLE.memmap(
+            VirtAddr::from(0x40000000 + 0xFFFF0000_00000000),
+            PhysAddr::from(0x40000000),
+            1 * 1024 * 1024 * 1024,
+            MemoryAttribute::READ | MemoryAttribute::WRITE | MemoryAttribute::EXECUTE,
+        )?;
+    }
+
+    Ok(())
+}
 
 pub extern "C" fn rust_start_main(cpuid: usize) {
     crate::mem::clear_bss();
@@ -29,9 +51,9 @@ pub extern "C" fn rust_start_main(cpuid: usize) {
     //     MemoryAttribute::READ | MemoryAttribute::WRITE,
     // ).expect("should be ok...");
 
-	// unsafe {
-	// 	core::ptr::write_volatile(0x100000000 as *mut u8, b'A');
-	// }
+    // unsafe {
+    // 	core::ptr::write_volatile(0x100000000 as *mut u8, b'A');
+    // }
 
     error!("panic here, it's ok");
     panic!("ends here");

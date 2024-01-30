@@ -5,7 +5,7 @@ pub mod aarch64;
 use core::fmt::Debug;
 
 bitflags::bitflags! {
-    #[derive(Debug)]
+    #[derive(Debug, Copy, Clone)]
     pub struct MemoryAttribute: usize {
         /// the memory is readable.
         const READ    = 1 << 0;

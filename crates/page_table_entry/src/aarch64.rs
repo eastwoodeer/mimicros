@@ -113,6 +113,10 @@ impl PTE {
     pub fn paddr(&self) -> PhysAddr {
         PhysAddr::from((self.0 & PTE::PHYS_ADDR_MASK) as usize)
     }
+
+    pub fn clear(&mut self) {
+        self.0 = 0
+    }
 }
 
 impl PTE {
@@ -135,8 +139,8 @@ impl fmt::Debug for PTE {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("aarch64 PTE");
         f.field("raw", &self.0)
-            .field("paddr", &self.paddr())
-            .field("attribute", &DescriptorAttr::from_bits_truncate(self.0))
+            .field("Physic Address", &self.paddr())
+            .field("Attribute", &DescriptorAttr::from_bits_truncate(self.0))
             .finish()
     }
 }

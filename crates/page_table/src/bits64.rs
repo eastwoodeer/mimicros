@@ -121,6 +121,30 @@ impl PageTable64 {
         Ok(l1_pte)
     }
 
+    pub fn get_entry_mut(&mut self, vaddr: VirtAddr) -> PagingResult<(&mut PTE, PageSize)> {
+        let l4_table = self.get_table_mut(self.root_paddr);
+        let l4_pte = &mut l4_table[pgt_l4_idx(vaddr)];
+
+        let l3_table = self.get_next_table_mut(l4_pte)?;
+        let l3_pte = &mut l3_table[pgt_l3_idx(vaddr)];
+
+        if l3_pte.is_huge() {
+            return Ok((l3_pte, PageSize::Size1G));
+        }
+
+        let l2_table = self.get_next_table_mut(l3_pte)?;
+        let l2_pte = &mut l2_table[pgt_l2_idx(vaddr)];
+
+        if l2_pte.is_huge() {
+            return Ok((l2_pte, PageSize::Size2M));
+        }
+
+        let l1_table = self.get_next_table_mut(l2_pte)?;
+        let l1_pte = &mut l1_table[pgt_l1_idx(vaddr)];
+
+        Ok((l1_pte, PageSize::Size4K))
+    }
+
     pub fn map(
         &mut self,
         vaddr: VirtAddr,
@@ -133,6 +157,62 @@ impl PageTable64 {
             return Err(PagingError::AlreadyMapped);
         }
         *entry = PTE::new_page(paddr, attr, page_size.is_huge());
+        Ok(())
+    }
+
+    pub fn unmap(&mut self, vaddr: VirtAddr) -> PagingResult<(PhysAddr, PageSize)> {
+        let (entry, page_size) = self.get_entry_mut(vaddr)?;
+        if entry.is_unused() {
+            return Err(PagingError::NotMapped);
+        }
+        let paddr = entry.paddr();
+        entry.clear();
+
+        Ok((paddr, page_size))
+    }
+
+    pub fn memmap(
+        &mut self,
+        vaddr: VirtAddr,
+        paddr: PhysAddr,
+        size: usize,
+        attr: MemoryAttribute,
+    ) -> PagingResult {
+        if !vaddr.is_aligned(PageSize::Size4K)
+            || !paddr.is_aligned(PageSize::Size4K)
+            || !memory_addr::is_aligned(size, PageSize::Size4K.into())
+        {
+            return Err(PagingError::NotAligned);
+        }
+
+        trace!(
+            "memmap({:#x?}): [{:#x?}, {:#x?}) -> [{:#x?}, {:#x?}) {:?}",
+            self.root_paddr,
+            vaddr,
+            vaddr + size,
+            paddr,
+            paddr + size,
+            attr
+        );
+
+        let mut size = size;
+        let mut vaddr = vaddr;
+        let mut paddr = paddr;
+        let page_size = PageSize::Size4K;
+
+        while size > 0 {
+            self.map(vaddr, paddr, page_size, attr).inspect_err(|e| {
+                error!(
+                    "failed to memmap page: {:#x?}({:?}) -> {:#x?}, {:?}",
+                    vaddr, page_size, paddr, e
+                );
+            })?;
+
+            vaddr += page_size as usize;
+            paddr += page_size as usize;
+            size -= page_size as usize;
+        }
+
         Ok(())
     }
 }

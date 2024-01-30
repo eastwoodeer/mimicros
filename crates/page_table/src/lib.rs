@@ -13,6 +13,7 @@ pub enum PagingError {
     NotMapped,
     MappedToHugePage,
 	AlreadyMapped,
+    NotAligned,
 }
 
 #[derive(Eq, PartialEq, Copy, Clone, Debug)]
@@ -26,6 +27,12 @@ impl PageSize {
 	fn is_huge(self) -> bool {
 		matches!(self, Self::Size1G | Self::Size2M)
 	}
+}
+
+impl From<PageSize> for usize {
+    fn from(value: PageSize) -> Self {
+        value as usize
+    }
 }
 
 pub type PagingResult<T = ()> = Result<T, PagingError>;
