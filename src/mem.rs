@@ -14,5 +14,5 @@ pub fn clear_bss() {
 }
 
 pub fn init_allocator() {
-    allocator::global_init(__bss_end as usize, 10*1024*1024);
+    allocator::global_init(__bss_end as usize, 900*1024*1024);
 }

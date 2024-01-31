@@ -1,6 +1,7 @@
 [workspace]
 members = [
   "crates/allocator",
+  "crates/lazy_init",
   "crates/logger",
   "crates/memory_addr",
   "crates/page_table",
@@ -27,3 +28,4 @@ page_table_entry = { path = "crates/page_table_entry" }
 allocator = { path = "crates/allocator" }
 spinlock = { path = "crates/spinlock" }
 logger = { path = "crates/logger" }
+lazy_init = { path = "crates/lazy_init" }

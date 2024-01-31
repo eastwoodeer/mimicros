@@ -1,3 +1,4 @@
+use lazy_init::LazyInit;
 use memory_addr::{PhysAddr, VirtAddr};
 use page_table::bits64::PageTable64;
 use page_table::{PageSize, PagingError};
@@ -16,22 +17,26 @@ const LOGO: &str = r#"
 "#;
 
 fn remap_kernel_memory() -> Result<(), PagingError> {
-    static mut KERNEL_PAGE_TABLE: PageTable64 = PageTable64::new();
+    static KERNEL_PAGE_TABLE: LazyInit<PageTable64> = LazyInit::new();
 
-    unsafe {
-        KERNEL_PAGE_TABLE.memmap(
-            VirtAddr::from(0 + 0xFFFF0000_00000000),
-            PhysAddr::from(0),
-            1 * 1024 * 1024 * 1024,
-            MemoryAttribute::READ | MemoryAttribute::WRITE | MemoryAttribute::DEVICE,
-        )?;
-        KERNEL_PAGE_TABLE.memmap(
-            VirtAddr::from(0x40000000 + 0xFFFF0000_00000000),
-            PhysAddr::from(0x40000000),
-            1 * 1024 * 1024 * 1024,
-            MemoryAttribute::READ | MemoryAttribute::WRITE | MemoryAttribute::EXECUTE,
-        )?;
-    }
+    let mut page_table = PageTable64::new();
+
+    page_table.memmap(
+        VirtAddr::from(0 + 0xFFFF0000_00000000),
+        PhysAddr::from(0),
+        1 * 1024 * 1024 * 1024,
+        MemoryAttribute::READ | MemoryAttribute::WRITE | MemoryAttribute::DEVICE,
+    )?;
+    page_table.memmap(
+        VirtAddr::from(0x40000000 + 0xFFFF0000_00000000),
+        PhysAddr::from(0x40000000),
+        1 * 1024 * 1024 * 1024,
+        MemoryAttribute::READ | MemoryAttribute::WRITE | MemoryAttribute::EXECUTE,
+    )?;
+
+    KERNEL_PAGE_TABLE.init_by(page_table);
+
+    crate::arch::aarch64::write_page_table_root(KERNEL_PAGE_TABLE.root_addr());
 
     Ok(())
 }
@@ -43,17 +48,10 @@ pub extern "C" fn rust_start_main(cpuid: usize) {
     info!("{}", LOGO);
     info!("boot cpuid: {}", cpuid);
     crate::mem::init_allocator();
-    let mut pgt = page_table::bits64::PageTable64::new();
-    // pgt.map(
-    //     VirtAddr::from(0x100000000),
-    //     PhysAddr::from(0x50000000),
-    //     PageSize::Size4K,
-    //     MemoryAttribute::READ | MemoryAttribute::WRITE,
-    // ).expect("should be ok...");
 
-    // unsafe {
-    // 	core::ptr::write_volatile(0x100000000 as *mut u8, b'A');
-    // }
+    remap_kernel_memory().expect("remap kernel memory failed.");
+
+    info!("kenel memory initialized.....");
 
     error!("panic here, it's ok");
     panic!("ends here");

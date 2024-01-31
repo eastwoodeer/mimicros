@@ -54,6 +54,10 @@ impl PageTable64 {
         }
     }
 
+    pub const fn root_addr(&self) -> PhysAddr {
+        self.root_paddr
+    }
+
     pub fn new() -> Self {
         let root_paddr = Self::alloc_table().unwrap();
         Self {
@@ -74,6 +78,7 @@ impl PageTable64 {
 
     fn get_next_table_mut<'a>(&mut self, entry: &mut PTE) -> PagingResult<&'a mut [PTE]> {
         if !entry.is_valid() {
+            debug!("entry: {:x?}", entry);
             Err(PagingError::NotMapped)
         } else if entry.is_huge() {
             Err(PagingError::MappedToHugePage)

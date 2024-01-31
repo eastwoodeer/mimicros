@@ -99,7 +99,7 @@ impl PTE {
     }
 
     pub fn is_unused(&self) -> bool {
-        self.0 == 0
+        self.0 & 0x0FFF == 0
     }
 
     pub fn is_valid(&self) -> bool {
