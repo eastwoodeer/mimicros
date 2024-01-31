@@ -26,6 +26,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "327762f6e5a765692301e5bb513e0d9fef63be86bbc14528052b1cd3e6f03e07"
 
 [[package]]
+name = "cfg-if"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
+
+[[package]]
 name = "lazy_init"
 version = "0.1.0"
 
@@ -53,6 +59,7 @@ dependencies = [
  "aarch64-cpu",
  "allocator",
  "bitflags",
+ "cfg-if",
  "lazy_init",
  "log",
  "logger",

@@ -26,22 +26,6 @@ unsafe fn init_boot_page_table() {
     );
 }
 
-/// Flushes the TLB.
-///
-/// If `vaddr` is [`None`], flushes the entire TLB. Otherwise, flushes the TLB
-/// entry that maps the given virtual address.
-#[inline]
-pub fn flush_tlb(vaddr: Option<VirtAddr>) {
-    unsafe {
-        if let Some(vaddr) = vaddr {
-            core::arch::asm!("tlbi vaae1is, {}; dsb sy; isb", in(reg) vaddr.as_usize())
-        } else {
-            // flush the entire TLB
-            core::arch::asm!("tlbi vmalle1; dsb sy; isb")
-        }
-    }
-}
-
 unsafe fn init_mmu() {
     // Device memory nGnRE
     let attr0 = MAIR_EL1::Attr0_Device::nonGathering_nonReordering_EarlyWriteAck;
@@ -72,7 +56,7 @@ unsafe fn init_mmu() {
     TTBR1_EL1.set(root_paddr);
 
     // Flush the entire TLB
-    flush_tlb(None);
+    crate::arch::flush_tlb(None);
 
     // Enable the MMU and turn on I-cache and D-cache
     SCTLR_EL1.modify(SCTLR_EL1::M::Enable + SCTLR_EL1::C::Cacheable + SCTLR_EL1::I::Cacheable);

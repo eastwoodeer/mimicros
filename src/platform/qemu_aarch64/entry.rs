@@ -36,17 +36,23 @@ fn remap_kernel_memory() -> Result<(), PagingError> {
 
     KERNEL_PAGE_TABLE.init_by(page_table);
 
-    crate::arch::aarch64::write_page_table_root(KERNEL_PAGE_TABLE.root_addr());
+    crate::arch::write_page_table_root(KERNEL_PAGE_TABLE.root_addr());
 
     Ok(())
 }
 
+fn init_interrupt()
+{
+
+}
+
 pub extern "C" fn rust_start_main(cpuid: usize) {
     crate::mem::clear_bss();
-    crate::arch::aarch64::exception::exception_init(exception_vector_base as usize);
+    crate::arch::exception::exception_init(exception_vector_base as usize);
     logger::init();
     info!("{}", LOGO);
     info!("boot cpuid: {}", cpuid);
+	crate::platform::aarch64::generic_timer::init_early();
     crate::mem::init_allocator();
 
     remap_kernel_memory().expect("remap kernel memory failed.");

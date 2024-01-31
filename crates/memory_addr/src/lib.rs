@@ -1,5 +1,6 @@
 #![no_std]
 
+use core::fmt;
 use core::ops::{Add, AddAssign};
 
 #[inline]
@@ -7,7 +8,7 @@ pub fn is_aligned(addr: usize, align: usize) -> bool {
     addr & (align - 1) == 0
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone)]
 pub struct PhysAddr(usize);
 
 impl PhysAddr {
@@ -35,7 +36,7 @@ impl PhysAddr {
     }
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone)]
 pub struct VirtAddr(usize);
 
 impl VirtAddr {
@@ -114,3 +115,14 @@ impl AddAssign<usize> for PhysAddr {
     }
 }
 
+impl fmt::Debug for VirtAddr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_fmt(format_args!("VA: {:#X}", self.0))
+    }
+}
+
+impl fmt::Debug for PhysAddr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_fmt(format_args!("PA: {:#X}", self.0))
+    }
+}
