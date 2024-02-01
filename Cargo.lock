@@ -66,6 +66,7 @@ dependencies = [
  "memory_addr",
  "page_table",
  "page_table_entry",
+ "ratio",
  "spinlock",
  "tock-registers",
 ]
@@ -87,6 +88,10 @@ dependencies = [
  "bitflags",
  "memory_addr",
 ]
+
+[[package]]
+name = "ratio"
+version = "0.1.0"
 
 [[package]]
 name = "spinlock"

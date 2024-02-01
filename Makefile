@@ -50,6 +50,9 @@ objdump:
 run: $(KERNEL_BIN)
 	qemu-system-aarch64 $(QEMU_OPTS)
 
+unit_test:
+	cargo test
+
 .gdbinit: .gdbinit.template
 	sed "s:remote-target:$(KERNEL_ELF):" < $^ > $@
 

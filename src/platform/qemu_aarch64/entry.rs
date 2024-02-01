@@ -3,6 +3,7 @@ use memory_addr::{PhysAddr, VirtAddr};
 use page_table::bits64::PageTable64;
 use page_table::{PageSize, PagingError};
 use page_table_entry::MemoryAttribute;
+use ratio::Ratio;
 
 extern "C" {
     fn exception_vector_base();
@@ -56,6 +57,9 @@ pub extern "C" fn rust_start_main(cpuid: usize) {
     crate::mem::init_allocator();
 
     remap_kernel_memory().expect("remap kernel memory failed.");
+
+	let r = Ratio::new(99999999, 3);
+	debug!("{:?}", r);
 
     info!("kenel memory initialized.....");
 
