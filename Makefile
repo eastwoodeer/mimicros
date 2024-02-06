@@ -39,7 +39,7 @@ format:
 	cargo fmt
 
 kernel:
-	cargo build $(MODE_ARG)
+	cargo build $(MODE_ARG) --target aarch64-unknown-none-softfloat
 
 $(KERNEL_BIN): kernel
 	rust-objcopy $(KERNEL_ELF) --binary-architecture=aarch64 --strip-all -O binary $(KERNEL_BIN)
@@ -50,7 +50,7 @@ objdump:
 run: $(KERNEL_BIN)
 	qemu-system-aarch64 $(QEMU_OPTS)
 
-unit_test:
+test:
 	cargo test
 
 .gdbinit: .gdbinit.template
