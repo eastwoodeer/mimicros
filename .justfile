@@ -5,6 +5,7 @@ KERNEL_ELF :=  TARGET_DIR / "mimicros"
 KERNEL_BIN := KERNEL_ELF + ".bin"
 
 alias r := run
+alias t := test
 alias f := fmt
 alias c := clean
 
@@ -13,6 +14,9 @@ default:
 
 run:
 	make run
+
+test:
+	make test
 
 fmt:
 	make format
