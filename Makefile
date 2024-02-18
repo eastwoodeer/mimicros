@@ -6,7 +6,7 @@ KERNEL_BIN := $(KERNEL_ELF).bin
 PLATFORM ?= qemu_aarch64
 
 ifeq ($(PLATFORM), qemu_aarch64)
-	QEMU_MACHINE := virt,gic-version=3,virtualization=on
+	QEMU_MACHINE := virt,gic-version=2,virtualization=on
 	QEMU_CPU := cortex-a76
 	QEMU_CPUS := 4
 	QEMU_MEM := 4G

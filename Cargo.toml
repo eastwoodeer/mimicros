@@ -3,6 +3,7 @@ resolver = "2"
 
 members = [
   "crates/allocator",
+  "crates/gic",
   "crates/lazy_init",
   "crates/logger",
   "crates/memory_addr",
@@ -34,3 +35,4 @@ spinlock = { path = "crates/spinlock" }
 logger = { path = "crates/logger" }
 lazy_init = { path = "crates/lazy_init" }
 ratio = { path = "crates/ratio" }
+gic = { path = "crates/gic" }

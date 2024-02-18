@@ -32,6 +32,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "gic"
+version = "0.1.0"
+dependencies = [
+ "tock-registers",
+]
+
+[[package]]
 name = "lazy_init"
 version = "0.1.0"
 
@@ -60,6 +67,7 @@ dependencies = [
  "allocator",
  "bitflags",
  "cfg-if",
+ "gic",
  "lazy_init",
  "log",
  "logger",

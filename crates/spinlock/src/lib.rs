@@ -43,6 +43,7 @@ impl NoOps {
 }
 
 pub type SpinLock<T> = SpinLockRaw<T, NoOps, NoOps>;
+pub type SpinNoIrq<T> = SpinLockRaw<T, NoOps, NoOps>; // FIXME: add No irq spinlock.
 
 pub struct SpinLockRaw<T, G: IrqGuard, P: PreemptGuard> {
     _phantom: PhantomData<(G, P)>,
