@@ -10,7 +10,7 @@ pub struct Ratio {
 }
 
 impl Ratio {
-    pub fn new(numerator: u32, denominator: u32) -> Self {
+    pub const fn new(numerator: u32, denominator: u32) -> Self {
         if numerator == 0 {
             return Self {
                 numerator,
@@ -41,6 +41,10 @@ impl Ratio {
             mult: mult as u32,
             shift,
         }
+    }
+
+    pub fn multiply(&self, v: u64) -> u64 {
+        ((v as u128 * self.mult as u128) >> self.shift) as u64
     }
 }
 

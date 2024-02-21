@@ -1,9 +1,22 @@
+use core::arch::asm;
+
 pub mod exception;
 
 use aarch64_cpu::registers::TTBR1_EL1;
 use tock_registers::interfaces::{Readable, Writeable};
 
 use memory_addr::{PhysAddr, VirtAddr};
+
+#[inline]
+pub fn enable_irqs() {
+    unsafe { asm!("msr daifclr, 2") };
+}
+
+#[inline]
+pub fn disable_irqs() {
+    unsafe { asm!("msr daifset, 2") };
+}
+
 
 /// Flushes the TLB.
 ///

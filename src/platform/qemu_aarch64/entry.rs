@@ -42,17 +42,27 @@ fn remap_kernel_memory() -> Result<(), PagingError> {
     Ok(())
 }
 
-fn init_interrupt() {}
+fn init_interrupt() {
+    let current_time = crate::platform::aarch64::timer::current_time_nanos();
+    crate::platform::aarch64::timer::set_timer(current_time + 10000000);
+
+    crate::platform::aarch64::gic::set_enable(30, true);
+
+    crate::arch::enable_irqs();
+}
 
 pub extern "C" fn rust_start_main(cpuid: usize) {
     crate::mem::clear_bss();
     crate::arch::exception::exception_init(exception_vector_base as usize);
-    logger::init();
-    info!("{}", LOGO);
-    info!("boot cpuid: {}", cpuid);
-    crate::platform::aarch64::generic_timer::init_early();
-    crate::mem::init_allocator();
 
+    crate::platform::aarch64::timer::init_early();
+    logger::init();
+
+    info!("{}", LOGO);
+
+    info!("boot cpuid: {}", cpuid);
+
+    crate::mem::init_allocator();
     remap_kernel_memory().expect("remap kernel memory failed.");
     info!("kenel memory initialized.....");
 
@@ -60,6 +70,10 @@ pub extern "C" fn rust_start_main(cpuid: usize) {
     // debug!("{:?}", r);
 
     crate::platform::aarch64::gic::init_primary();
+    crate::platform::aarch64::timer::init();
+
+    init_interrupt();
+
 
     error!("panic here, it's ok");
     panic!("ends here");

@@ -17,10 +17,10 @@ core::arch::global_asm!(
     init_mmu = sym init_mmu,
     switch_to_el1 = sym switch_to_el1,
     enable_fp = sym enable_fp,
-    rust_start_main = sym crate::platform::rust_start_main);
+    rust_start_main = sym crate::platform::entry::rust_start_main);
 
 unsafe fn init_boot_page_table() {
-    crate::platform::qemu_aarch64::mem::init_boot_page_table(
+    crate::platform::mem::init_boot_page_table(
         &mut BOOT_PGTABLE_L0,
         &mut BOOT_PGTABLE_L1,
     );
