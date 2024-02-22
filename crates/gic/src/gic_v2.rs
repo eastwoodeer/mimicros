@@ -149,13 +149,13 @@ impl GicDistributor {
             self.regs().ITARGETSR[idx / 4].set(0x01_01_01_01);
         }
 
-		// set SPI to Edge trigger
-		for idx in SPI_RANGE.start..self.max_irqs {
-			self.config_interrupt(idx, TriggerMode::Edge);
-		}
+        // set SPI to Edge trigger
+        for idx in SPI_RANGE.start..self.max_irqs {
+            self.config_interrupt(idx, TriggerMode::Edge);
+        }
 
-		// Enable GICD
-		self.regs().CTLR.set(1);
+        // Enable GICD
+        self.regs().CTLR.set(1);
     }
 }
 
@@ -170,27 +170,27 @@ impl GicCpuInterface {
         unsafe { self.base.as_ref() }
     }
 
-	pub fn iar(&self) -> u32 {
-		self.regs().IAR.get()
-	}
+    pub fn iar(&self) -> u32 {
+        self.regs().IAR.get()
+    }
 
-	pub fn eoi(&self, iar: u32) {
-		self.regs().EOIR.set(iar)
-	}
+    pub fn eoi(&self, iar: u32) {
+        self.regs().EOIR.set(iar)
+    }
 
-	pub fn handle_irq<F: FnOnce(u32)>(&self, handler: F) {
-		let iar = self.iar();
-		let vector = iar & 0x3FF;
-		if vector < 1020 {
-			handler(vector);
-			self.eoi(iar);
-		} else {
-			panic!("spurious interrupt ID: {}", iar);
-		}
-	}
+    pub fn handle_irq<F: FnOnce(u32)>(&self, handler: F) {
+        let iar = self.iar();
+        let vector = iar & 0x3FF;
+        if vector < 1020 {
+            handler(vector);
+            self.eoi(iar);
+        } else {
+            panic!("spurious interrupt ID: {}", iar);
+        }
+    }
 
-	pub fn init(&self) {
-		self.regs().CTLR.set(1);
-		self.regs().PMR.set(0xFF);
-	}
+    pub fn init(&self) {
+        self.regs().CTLR.set(1);
+        self.regs().PMR.set(0xFF);
+    }
 }

@@ -43,8 +43,7 @@ impl GlobalAllocator {
 
     pub fn dealloc_pages(&self, ptr: *mut u8, pages: usize) {
         let ptr = NonNull::new(ptr).expect("expect none NULL pointer.");
-        let layout =
-            Layout::from_size_align(4096 * pages, 4096).expect("unexpected layout");
+        let layout = Layout::from_size_align(4096 * pages, 4096).expect("unexpected layout");
         self.inner.lock().dealloc(ptr, layout);
     }
 }

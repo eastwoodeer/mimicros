@@ -12,7 +12,7 @@ pub enum PagingError {
     NoMemory,
     NotMapped,
     MappedToHugePage,
-	AlreadyMapped,
+    AlreadyMapped,
     NotAligned,
 }
 
@@ -24,9 +24,9 @@ pub enum PageSize {
 }
 
 impl PageSize {
-	fn is_huge(self) -> bool {
-		matches!(self, Self::Size1G | Self::Size2M)
-	}
+    fn is_huge(self) -> bool {
+        matches!(self, Self::Size1G | Self::Size2M)
+    }
 }
 
 impl From<PageSize> for usize {

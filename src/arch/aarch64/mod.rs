@@ -17,7 +17,6 @@ pub fn disable_irqs() {
     unsafe { asm!("msr daifset, 2") };
 }
 
-
 /// Flushes the TLB.
 ///
 /// If `vaddr` is [`None`], flushes the entire TLB. Otherwise, flushes the TLB

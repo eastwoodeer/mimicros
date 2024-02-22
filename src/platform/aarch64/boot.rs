@@ -20,10 +20,7 @@ core::arch::global_asm!(
     rust_start_main = sym crate::platform::entry::rust_start_main);
 
 unsafe fn init_boot_page_table() {
-    crate::platform::mem::init_boot_page_table(
-        &mut BOOT_PGTABLE_L0,
-        &mut BOOT_PGTABLE_L1,
-    );
+    crate::platform::mem::init_boot_page_table(&mut BOOT_PGTABLE_L0, &mut BOOT_PGTABLE_L1);
 }
 
 unsafe fn init_mmu() {

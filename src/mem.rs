@@ -22,5 +22,5 @@ pub fn init_allocator() {
 
 #[inline]
 pub const fn phys_to_virt(paddr: PhysAddr) -> VirtAddr {
-	VirtAddr::from(paddr.as_usize() + 0xFFFF_0000_0000_0000)
+    VirtAddr::from(paddr.as_usize() + 0xFFFF_0000_0000_0000)
 }

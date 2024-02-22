@@ -24,5 +24,9 @@ pub fn init_primary() {
 }
 
 pub fn iar() -> u32 {
-	GICC.iar()
+    GICC.iar()
+}
+
+pub fn eoi(iar: u32) {
+    GICC.eoi(iar)
 }

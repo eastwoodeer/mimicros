@@ -27,8 +27,6 @@ pub fn set_timer(deadline_ns: u64) {
     if current_ticks < deadline_ticks {
         let interval = deadline_ticks - current_ticks;
         CNTP_TVAL_EL0.set(interval);
-
-        debug!("interval: {}, {}", interval, CNTP_TVAL_EL0.get());
     } else {
         CNTP_TVAL_EL0.set(0);
     }
@@ -52,7 +50,7 @@ pub fn init_early() {
 
 pub fn init() {
     CNTP_CTL_EL0.write(CNTP_CTL_EL0::ENABLE::SET);
-	CNTP_TVAL_EL0.set(0);
+    CNTP_TVAL_EL0.set(0);
 }
 
 pub fn init_generic_timer() {}

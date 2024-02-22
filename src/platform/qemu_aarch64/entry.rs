@@ -5,7 +5,7 @@ use page_table::{PageSize, PagingError};
 use page_table_entry::MemoryAttribute;
 use ratio::Ratio;
 
-use crate::platform::{self, timer, gic};
+use crate::platform::{self, irq, timer};
 
 extern "C" {
     fn exception_vector_base();
@@ -48,9 +48,19 @@ fn init_interrupt() {
     let current_time = platform::time::current_time_nanos();
 
     timer::set_timer(current_time + 10000000);
-    gic::set_enable(30, true);
+    irq::set_enable(30, true);
 
     crate::arch::enable_irqs();
+}
+
+fn delay(ns: u64) {
+    let now = platform::time::current_time_nanos();
+
+    loop {
+        if platform::time::current_time_nanos() > now + ns {
+            break;
+        }
+    }
 }
 
 pub extern "C" fn rust_start_main(cpuid: usize) {
@@ -74,7 +84,6 @@ pub extern "C" fn rust_start_main(cpuid: usize) {
     platform::platform_init();
 
     init_interrupt();
-
 
     error!("panic here, it's ok");
     panic!("ends here");

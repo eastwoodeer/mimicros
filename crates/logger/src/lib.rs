@@ -1,6 +1,6 @@
 #![cfg_attr(not(test), no_std)]
 
-use log::{LevelFilter, Log, Level};
+use log::{Level, LevelFilter, Log};
 
 use core::fmt::{self, Write};
 use core::result::Result::Ok;

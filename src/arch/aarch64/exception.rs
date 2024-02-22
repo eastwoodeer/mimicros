@@ -1,4 +1,5 @@
 use aarch64_cpu::registers::{ESR_EL1, FAR_EL1, VBAR_EL1};
+use core::arch::asm;
 use core::arch::global_asm;
 use tock_registers::interfaces::{Readable, Writeable};
 
@@ -14,6 +15,16 @@ fn invalid_exception(tf: u64, kind: u64, source: u64) {
         FAR_EL1.get(),
         ESR_EL1.get()
     );
+}
+
+#[no_mangle]
+fn handle_irq(_tf: u64) {
+    let current_time = crate::platform::time::current_time_nanos();
+    let iar = crate::platform::irq::iar();
+    info!("[{}] handle irq... {}", current_time, iar);
+
+    crate::platform::timer::set_timer(current_time + 1000000000);
+    crate::platform::irq::eoi(iar);
 }
 
 pub fn exception_init(vbar_el1: usize) {
