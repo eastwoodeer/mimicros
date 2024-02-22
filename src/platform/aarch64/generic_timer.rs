@@ -20,10 +20,6 @@ pub fn nanos_to_ticks(nanos: u64) -> u64 {
     unsafe { NANOS_TO_CNTPCT_RATIO.multiply(nanos) }
 }
 
-pub fn current_time_nanos() -> u64 {
-    ticks_to_nanos(current_ticks())
-}
-
 pub fn set_timer(deadline_ns: u64) {
     let current_ticks = current_ticks();
     let deadline_ticks = nanos_to_ticks(deadline_ns);
