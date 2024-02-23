@@ -1,9 +1,8 @@
 use lazy_init::LazyInit;
 use memory_addr::{PhysAddr, VirtAddr};
 use page_table::bits64::PageTable64;
-use page_table::{PageSize, PagingError};
+use page_table::PagingError;
 use page_table_entry::MemoryAttribute;
-use ratio::Ratio;
 
 use crate::platform::{self, irq, timer};
 
@@ -45,6 +44,8 @@ fn remap_kernel_memory() -> Result<(), PagingError> {
 }
 
 fn init_interrupt() {
+    crate::arch::disable_irqs();
+
     let current_time = platform::time::current_time_nanos();
 
     timer::set_timer(current_time + 10000000);
@@ -53,6 +54,7 @@ fn init_interrupt() {
     crate::arch::enable_irqs();
 }
 
+#[allow(dead_code)]
 fn delay(ns: u64) {
     let now = platform::time::current_time_nanos();
 
@@ -63,7 +65,7 @@ fn delay(ns: u64) {
     }
 }
 
-pub extern "C" fn rust_start_main(cpuid: usize) {
+pub extern "C" fn rust_start_primary(cpuid: usize) {
     crate::mem::clear_bss();
     crate::arch::exception::exception_init(exception_vector_base as usize);
 

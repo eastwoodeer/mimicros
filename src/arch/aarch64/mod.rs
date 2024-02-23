@@ -3,7 +3,7 @@ use core::arch::asm;
 pub mod exception;
 
 use aarch64_cpu::registers::TTBR1_EL1;
-use tock_registers::interfaces::{Readable, Writeable};
+use tock_registers::interfaces::Writeable;
 
 use memory_addr::{PhysAddr, VirtAddr};
 

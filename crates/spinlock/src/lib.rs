@@ -1,8 +1,8 @@
 #![cfg_attr(not(test), no_std)]
 
 use core::cell::UnsafeCell;
-use core::marker::{PhantomData, Send, Sync};
-use core::ops::{Deref, DerefMut, Drop};
+use core::marker::PhantomData;
+use core::ops::{Deref, DerefMut};
 use core::sync::atomic::{
     AtomicBool,
     Ordering::{Acquire, Relaxed, Release},

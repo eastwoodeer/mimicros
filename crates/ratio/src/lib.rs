@@ -1,6 +1,6 @@
 #![cfg_attr(not(test), no_std)]
 
-use core::{cmp::PartialEq, fmt};
+use core::fmt;
 
 pub struct Ratio {
     numerator: u32,

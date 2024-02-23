@@ -1,7 +1,5 @@
 use core::fmt;
 use core::marker::PhantomData;
-use core::marker::Send;
-use core::option::Option::{self, *};
 use core::ptr;
 
 #[derive(Copy, Clone)]

@@ -40,6 +40,7 @@ pub fn virt_to_phys(vaddr: VirtAddr) -> PhysAddr {
     PhysAddr::from(vaddr.as_usize() - 0xFFFF_0000_0000_0000)
 }
 
+#[allow(dead_code)]
 impl PageTable64 {
     pub fn alloc_table() -> PagingResult<PhysAddr> {
         if let Ok(vaddr) = global_allocator().alloc_pages(1) {

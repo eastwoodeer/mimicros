@@ -3,7 +3,6 @@
 use log::{Level, LevelFilter, Log};
 
 use core::fmt::{self, Write};
-use core::result::Result::Ok;
 
 pub trait LogFuncs {
     fn console_write_str(&self, s: &str);

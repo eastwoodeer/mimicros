@@ -3,8 +3,8 @@ use gic::gic_v2::{GicCpuInterface, GicDistributor};
 use memory_addr::PhysAddr;
 use spinlock::SpinNoIrq;
 
-pub const MAX_IRQ_COUNT: usize = 1024;
-pub const NON_SECURE_PHYSICAL_TIMER_INTID: usize = 30;
+// pub const MAX_IRQ_COUNT: usize = 1024;
+// pub const NON_SECURE_PHYSICAL_TIMER_INTID: usize = 30;
 
 const GICD_BASE: PhysAddr = PhysAddr::from(0x0800_0000);
 const GICC_BASE: PhysAddr = PhysAddr::from(0x0801_0000);

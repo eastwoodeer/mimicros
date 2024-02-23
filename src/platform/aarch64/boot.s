@@ -20,7 +20,7 @@ _start:
 
 prepare_rust:
     mov x0, x19
-    ldr x8, ={rust_start_main}
+    ldr x8, ={rust_start_primary}
     blr x8
     b .
 

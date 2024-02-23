@@ -5,9 +5,7 @@ use core::assert;
 use core::cmp::{max, min};
 use core::fmt;
 use core::mem::size_of;
-use core::option::Option::Some;
 use core::ptr::NonNull;
-use core::result::Result::{self, Err, Ok};
 
 use crate::{AllocError, AllocResult};
 

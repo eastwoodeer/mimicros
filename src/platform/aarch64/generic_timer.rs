@@ -45,5 +45,3 @@ pub fn init() {
     CNTP_CTL_EL0.write(CNTP_CTL_EL0::ENABLE::SET);
     CNTP_TVAL_EL0.set(0);
 }
-
-pub fn init_generic_timer() {}

@@ -1,7 +1,9 @@
+use core::ptr::addr_of_mut;
+
 use aarch64_cpu::{asm, asm::barrier, registers::*};
 use tock_registers::interfaces::{ReadWriteable, Readable, Writeable};
 
-use memory_addr::{PhysAddr, VirtAddr};
+use memory_addr::PhysAddr;
 use page_table_entry::aarch64::PTE;
 
 #[link_section = ".data.boot_pgtable"]
@@ -17,10 +19,13 @@ core::arch::global_asm!(
     init_mmu = sym init_mmu,
     switch_to_el1 = sym switch_to_el1,
     enable_fp = sym enable_fp,
-    rust_start_main = sym crate::platform::entry::rust_start_main);
+    rust_start_primary = sym crate::platform::entry::rust_start_primary);
 
 unsafe fn init_boot_page_table() {
-    crate::platform::mem::init_boot_page_table(&mut BOOT_PGTABLE_L0, &mut BOOT_PGTABLE_L1);
+    crate::platform::mem::init_boot_page_table(
+        addr_of_mut!(BOOT_PGTABLE_L0),
+        addr_of_mut!(BOOT_PGTABLE_L1),
+    );
 }
 
 unsafe fn init_mmu() {

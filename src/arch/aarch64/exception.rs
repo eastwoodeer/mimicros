@@ -1,5 +1,4 @@
 use aarch64_cpu::registers::{ESR_EL1, FAR_EL1, VBAR_EL1};
-use core::arch::asm;
 use core::arch::global_asm;
 use tock_registers::interfaces::{Readable, Writeable};
 

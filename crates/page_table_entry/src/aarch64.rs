@@ -76,7 +76,7 @@ bitflags::bitflags! {
 }
 
 impl DescriptorAttr {
-    const ATTR_INDEX_MASK: u64 = 0x111_00;
+    // const ATTR_INDEX_MASK: u64 = 0x111_00;
 
     // 1 for Normal memory, 0 for device memory
     const fn from_memory_type(memory_type: MemoryType) -> Self {

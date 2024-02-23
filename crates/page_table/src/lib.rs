@@ -5,8 +5,6 @@ extern crate log;
 
 pub mod bits64;
 
-use core::result::Result;
-
 #[derive(Debug)]
 pub enum PagingError {
     NoMemory,

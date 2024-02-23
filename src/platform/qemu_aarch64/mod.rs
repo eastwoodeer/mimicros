@@ -3,7 +3,7 @@ pub mod mem;
 
 pub mod timer {
     pub use crate::platform::aarch64::generic_timer::{
-        current_ticks, init, init_early, nanos_to_ticks, set_timer, ticks_to_nanos,
+        current_ticks, init, init_early, set_timer, ticks_to_nanos,
     };
 }
 

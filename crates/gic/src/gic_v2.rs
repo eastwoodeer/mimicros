@@ -1,4 +1,3 @@
-use core::ops::RangeBounds;
 use core::ptr::NonNull;
 
 use tock_registers::interfaces::{Readable, Writeable};
