@@ -39,13 +39,6 @@ pub fn init_early() {
         CNTPCT_TO_NANOS_RATIO = Ratio::new(1_000_000_000, freq as u32);
         NANOS_TO_CNTPCT_RATIO = Ratio::new(freq as u32, 1_000_000_000);
     }
-
-    unsafe {
-        debug!(
-            "freq: {:?}, CNTPCT_TO_NANOS_RATIO: {:?}, NANOS_TO_CNTPCT_RATIO: {:?}",
-            freq, CNTPCT_TO_NANOS_RATIO, NANOS_TO_CNTPCT_RATIO
-        );
-    }
 }
 
 pub fn init() {

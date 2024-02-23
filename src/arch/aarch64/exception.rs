@@ -19,11 +19,11 @@ fn invalid_exception(tf: u64, kind: u64, source: u64) {
 
 #[no_mangle]
 fn handle_irq(_tf: u64) {
-    let current_time = crate::platform::time::current_time_nanos();
+    let current_time = crate::platform::time::current_time();
     let iar = crate::platform::irq::iar();
-    info!("[{}] handle irq... {}", current_time, iar);
+    info!("[{}] handle irq... {}", current_time.as_nanos(), iar);
 
-    crate::platform::timer::set_timer(current_time + 1000000000);
+    crate::platform::timer::set_timer(current_time.as_nanos() as u64 + 1000000000);
     crate::platform::irq::eoi(iar);
 }
 
