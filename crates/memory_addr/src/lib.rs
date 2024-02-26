@@ -4,8 +4,18 @@ use core::fmt;
 use core::ops::{Add, AddAssign};
 
 #[inline]
-pub fn is_aligned(addr: usize, align: usize) -> bool {
+pub const fn is_aligned(addr: usize, align: usize) -> bool {
     addr & (align - 1) == 0
+}
+
+#[inline]
+pub const fn align_down(addr: usize, align: usize) -> usize {
+    addr & !(align - 1)
+}
+
+#[inline]
+pub const fn align_up(addr: usize, align: usize) -> usize {
+    (addr + align - 1) & !(align - 1)
 }
 
 #[derive(Copy, Clone)]

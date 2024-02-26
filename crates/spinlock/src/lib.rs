@@ -31,6 +31,20 @@ impl IrqGuard for NoOps {
     fn irq_restore(_state: Self::State) {}
 }
 
+pub struct IrqSave;
+
+impl IrqGuard for IrqSave {
+    type State = usize;
+
+    fn irq_save() -> Self::State {
+        hal::arch::local_irq_save()
+    }
+
+    fn irq_restore(state: Self::State) {
+        hal::arch::local_irq_restore(state)
+    }
+}
+
 impl PreemptGuard for NoOps {
     fn enable_preempt() {}
     fn disable_preempt() {}
@@ -42,13 +56,32 @@ impl NoOps {
     }
 }
 
-pub type SpinLock<T> = SpinLockRaw<T, NoOps, NoOps>;
-pub type SpinNoIrq<T> = SpinLockRaw<T, NoOps, NoOps>; // FIXME: add No irq spinlock.
+extern "Rust" {
+    fn __PreemptGuard_enable_preempt();
+    fn __PreemptGuard_disable_preempt();
+}
 
-pub struct SpinLockRaw<T, G: IrqGuard, P: PreemptGuard> {
-    _phantom: PhantomData<(G, P)>,
+pub struct TaskGuard;
+
+impl PreemptGuard for TaskGuard {
+    fn enable_preempt() {
+        // task::enable_preempt()
+        unsafe { __PreemptGuard_enable_preempt() }
+    }
+
+    fn disable_preempt() {
+        // task::disable_preempt()
+        unsafe { __PreemptGuard_disable_preempt() }
+    }
+}
+
+pub type SpinLock<T> = SpinLockPrototype<T, NoOps, NoOps>;
+pub type SpinNoIrq<T> = SpinLockPrototype<T, IrqSave, TaskGuard>;
+
+pub struct SpinLockPrototype<T, G: IrqGuard, P: PreemptGuard> {
     locked: AtomicBool,
     value: UnsafeCell<T>,
+    _phantom: PhantomData<(G, P)>,
 }
 
 // UnsafeCell does not implement Sync, which means that our type is no longer
@@ -60,14 +93,14 @@ pub struct SpinLockRaw<T, G: IrqGuard, P: PreemptGuard> {
 //
 // Note: We don't need T is Sync, because SpinLock<T> will only allow one thread at a time to
 // access the T it protects.
-unsafe impl<T, G: IrqGuard, P: PreemptGuard> Sync for SpinLockRaw<T, G, P> where T: Send {}
+unsafe impl<T, G: IrqGuard, P: PreemptGuard> Sync for SpinLockPrototype<T, G, P> where T: Send {}
 
 pub struct SpinGuard<'a, T, G: IrqGuard, P: PreemptGuard> {
-    lock: &'a SpinLockRaw<T, G, P>,
+    lock: &'a SpinLockPrototype<T, G, P>,
     irq_state: G::State,
 }
 
-impl<T, G: IrqGuard, P: PreemptGuard> SpinLockRaw<T, G, P> {
+impl<T, G: IrqGuard, P: PreemptGuard> SpinLockPrototype<T, G, P> {
     pub const fn new(v: T) -> Self {
         Self {
             locked: AtomicBool::new(false),
@@ -91,6 +124,10 @@ impl<T, G: IrqGuard, P: PreemptGuard> SpinLockRaw<T, G, P> {
             lock: self,
             irq_state,
         }
+    }
+
+    pub unsafe fn force_unlock(&self) {
+        self.locked.store(false, Release);
     }
 }
 

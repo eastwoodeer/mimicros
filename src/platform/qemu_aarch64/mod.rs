@@ -8,7 +8,7 @@ pub mod timer {
 }
 
 pub mod irq {
-    pub use crate::platform::aarch64::gic::{eoi, iar, init_primary, set_enable};
+    pub use crate::platform::aarch64::gic::{dispatch_irq, eoi, iar, init_primary, set_enable};
 }
 
 pub fn platform_init() {

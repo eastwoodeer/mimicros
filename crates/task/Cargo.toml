@@ -1,0 +1,13 @@
+[package]
+name = "task"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+log = "0.4"
+
+hal = { path = "../hal" }
+memory_addr = { path = "../memory_addr" }
+scheduler = { path = "../scheduler" }
+spinlock = { path = "../spinlock" }
+lazy_init = { path = "../lazy_init" }

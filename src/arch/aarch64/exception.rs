@@ -16,14 +16,16 @@ fn invalid_exception(tf: u64, kind: u64, source: u64) {
     );
 }
 
+extern "Rust" {
+    fn __PreemptGuard_enable_preempt();
+    fn __PreemptGuard_disable_preempt();
+}
+
 #[no_mangle]
 fn handle_irq(_tf: u64) {
-    let current_time = crate::platform::time::current_time();
-    let iar = crate::platform::irq::iar();
-    info!("[{}] handle irq... {}", current_time.as_nanos(), iar);
-
-    crate::platform::timer::set_timer(current_time.as_nanos() as u64 + 1000000000);
-    crate::platform::irq::eoi(iar);
+    unsafe { __PreemptGuard_disable_preempt() }
+    crate::platform::irq::dispatch_irq(0);
+    unsafe { __PreemptGuard_enable_preempt() }
 }
 
 pub fn exception_init(vbar_el1: usize) {

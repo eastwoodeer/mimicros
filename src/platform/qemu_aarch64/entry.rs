@@ -44,14 +44,14 @@ fn remap_kernel_memory() -> Result<(), PagingError> {
 }
 
 fn init_interrupt() {
-    crate::arch::disable_irqs();
+    hal::arch::disable_irqs();
 
     let current_time = platform::time::current_time_nanos();
 
     timer::set_timer(current_time + 10000000);
     irq::set_enable(30, true);
 
-    crate::arch::enable_irqs();
+    hal::arch::enable_irqs();
 }
 
 #[allow(dead_code)]
@@ -84,6 +84,8 @@ pub extern "C" fn rust_start_primary(cpuid: usize) {
     // debug!("{:?}", r);
 
     platform::platform_init();
+
+    task::init_scheduler();
 
     init_interrupt();
 

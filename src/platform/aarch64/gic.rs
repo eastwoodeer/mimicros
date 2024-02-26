@@ -30,3 +30,7 @@ pub fn iar() -> u32 {
 pub fn eoi(iar: u32) {
     GICC.eoi(iar)
 }
+
+pub fn dispatch_irq(irq_num: usize) {
+    GICC.handle_irq(|irq_num| crate::irq::dispatch_irq_common(irq_num as _));
+}

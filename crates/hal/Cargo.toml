@@ -1,0 +1,11 @@
+[package]
+name = "hal"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+cfg-if = "1.0"
+aarch64-cpu = "9.4.0"
+tock-registers = "0.8"
+
+memory_addr = { path = "../memory_addr" }

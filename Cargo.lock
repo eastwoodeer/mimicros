@@ -39,6 +39,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "hal"
+version = "0.1.0"
+dependencies = [
+ "aarch64-cpu",
+ "cfg-if",
+ "memory_addr",
+ "tock-registers",
+]
+
+[[package]]
 name = "lazy_init"
 version = "0.1.0"
 
@@ -68,6 +78,7 @@ dependencies = [
  "bitflags",
  "cfg-if",
  "gic",
+ "hal",
  "lazy_init",
  "log",
  "logger",
@@ -75,7 +86,9 @@ dependencies = [
  "page_table",
  "page_table_entry",
  "ratio",
+ "scheduler",
  "spinlock",
+ "task",
  "tock-registers",
 ]
 
@@ -102,8 +115,27 @@ name = "ratio"
 version = "0.1.0"
 
 [[package]]
+name = "scheduler"
+version = "0.1.0"
+
+[[package]]
 name = "spinlock"
 version = "0.1.0"
+dependencies = [
+ "hal",
+]
+
+[[package]]
+name = "task"
+version = "0.1.0"
+dependencies = [
+ "hal",
+ "lazy_init",
+ "log",
+ "memory_addr",
+ "scheduler",
+ "spinlock",
+]
 
 [[package]]
 name = "tock-registers"

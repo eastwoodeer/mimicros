@@ -8,6 +8,7 @@ extern crate log;
 mod arch;
 mod console;
 mod cpu;
+mod irq;
 mod mem;
 mod platform;
 

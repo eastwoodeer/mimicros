@@ -5,8 +5,8 @@ pub unsafe fn init_boot_page_table(
     boot_pgtable_l0: *mut [PTE; 512],
     boot_pgtable_l1: *mut [PTE; 512],
 ) {
-    let pgtable_l0 = boot_pgtable_l0.as_mut().unwrap();
-    let pgtable_l1 = boot_pgtable_l1.as_mut().unwrap();
+    let pgtable_l0 = &mut *boot_pgtable_l0;
+    let pgtable_l1 = &mut *boot_pgtable_l1;
 
     pgtable_l0[0] = PTE::new_table(PhysAddr::from(pgtable_l1.as_ptr() as usize));
     // 0 ~ 0x4000_0000 1G block device memory

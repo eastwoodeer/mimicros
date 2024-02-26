@@ -4,13 +4,16 @@ resolver = "2"
 members = [
   "crates/allocator",
   "crates/gic",
+  "crates/hal",
   "crates/lazy_init",
   "crates/logger",
   "crates/memory_addr",
   "crates/page_table",
   "crates/page_table_entry",
   "crates/ratio",
+  "crates/scheduler",
   "crates/spinlock",
+  "crates/task",
 ]
 
 [package]
@@ -36,3 +39,6 @@ logger = { path = "crates/logger" }
 lazy_init = { path = "crates/lazy_init" }
 ratio = { path = "crates/ratio" }
 gic = { path = "crates/gic" }
+scheduler = { path = "crates/scheduler" }
+task = { path = "crates/task" }
+hal = { path = "crates/hal" }
