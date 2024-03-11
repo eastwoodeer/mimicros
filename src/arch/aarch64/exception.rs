@@ -24,7 +24,7 @@ extern "Rust" {
 #[no_mangle]
 fn handle_irq(_tf: u64) {
     unsafe { __PreemptGuard_disable_preempt() }
-    crate::platform::irq::dispatch_irq(0);
+    crate::platform::irq::dispatch_irq();
     unsafe { __PreemptGuard_enable_preempt() }
 }
 
