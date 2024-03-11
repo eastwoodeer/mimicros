@@ -6,6 +6,7 @@ members = [
   "crates/gic",
   "crates/hal",
   "crates/lazy_init",
+  "crates/linked_list",
   "crates/logger",
   "crates/memory_addr",
   "crates/page_table",
