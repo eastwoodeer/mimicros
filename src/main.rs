@@ -4,8 +4,6 @@
 #[macro_use]
 extern crate log;
 
-use hal::println;
-
 mod lang_items;
 
 use lazy_init::LazyInit;
@@ -82,8 +80,6 @@ pub extern "C" fn rust_start_primary(cpuid: usize) {
 
     timer::init_early();
     logger::init();
-
-    println!("hello world");
 
     info!("{}", LOGO);
 

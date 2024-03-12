@@ -4,7 +4,7 @@
 _start:
     mrs x19, mpidr_el1
     and x19, x19, {CONST_CORE_ID_MASK}
-    ldr x20, 0
+    ldr x20, BOOT_CORE_ID
     // x19 is callee saved register, after rust functions x19 will not changed.
     // here x19 is used for saving the cpuid
     cmp x19, x20

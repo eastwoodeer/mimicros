@@ -12,6 +12,9 @@ static mut BOOT_PGTABLE_L0: [PTE; 512] = [PTE::empty(); 512];
 #[link_section = ".data.boot_pgtable"]
 static mut BOOT_PGTABLE_L1: [PTE; 512] = [PTE::empty(); 512];
 
+#[no_mangle]
+pub static BOOT_CORE_ID: u64 = 0;
+
 extern "C" {
     fn rust_start_primary(cpuid: usize);
 }
