@@ -11,3 +11,4 @@ memory_addr = { path = "../memory_addr" }
 scheduler = { path = "../scheduler" }
 spinlock = { path = "../spinlock" }
 lazy_init = { path = "../lazy_init" }
+timer_list = { path = "../timer_list" }

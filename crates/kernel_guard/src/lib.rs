@@ -32,23 +32,25 @@ impl NoOps {
     }
 }
 
+extern "Rust" {
+    fn __preempt_guard_enable_preempt();
+    fn __preempt_guard_disable_preempt();
+    fn local_irq_save() -> usize;
+    fn local_irq_restore(flags: usize);
+}
+
 pub struct IrqSaveRestore;
 
 impl IrqProtected for IrqSaveRestore {
     type State = usize;
 
     fn irq_save() -> Self::State {
-        hal::arch::local_irq_save()
+        unsafe { local_irq_save() }
     }
 
     fn irq_restore(state: Self::State) {
-        hal::arch::local_irq_restore(state)
+        unsafe { local_irq_restore(state); }
     }
-}
-
-extern "Rust" {
-    fn __preempt_guard_enable_preempt();
-    fn __preempt_guard_disable_preempt();
 }
 
 pub struct PreemptGuard;

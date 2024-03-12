@@ -4,8 +4,18 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+log = "0.4"
 cfg-if = "1.0"
 aarch64-cpu = "9.4.0"
 tock-registers = "0.8"
 
+allocator = { path = "../allocator" }
 memory_addr = { path = "../memory_addr" }
+kernel_guard = { path = "../kernel_guard" }
+page_table = { path = "../page_table" }
+page_table_entry = { path = "../page_table_entry" }
+ratio = { path = "../ratio" }
+logger = { path = "../logger" }
+lazy_init = { path = "../lazy_init" }
+gic = { path = "../gic" }
+spinlock = { path = "../spinlock" }

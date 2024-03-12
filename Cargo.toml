@@ -16,6 +16,7 @@ members = [
   "crates/scheduler",
   "crates/spinlock",
   "crates/task",
+  "crates/timer_list",
 ]
 
 [package]

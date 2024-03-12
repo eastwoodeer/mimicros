@@ -32,6 +32,13 @@ impl RunQueue {
         }
     }
 
+    pub fn yield_current(&mut self) {
+        let current = crate::current();
+        trace!("task yield: {}", current.id_name());
+        assert!(current.is_running());
+        self.resched(false);
+    }
+
     pub fn preempt_resched(&mut self) {
         let current = crate::current();
         let preempt_count = current.preempt_count();

@@ -1,3 +1,4 @@
+/*
 use lazy_init::LazyInit;
 use memory_addr::{PhysAddr, VirtAddr};
 use page_table::bits64::PageTable64;
@@ -44,14 +45,14 @@ fn remap_kernel_memory() -> Result<(), PagingError> {
 }
 
 fn init_interrupt() {
-    hal::arch::disable_irqs();
+    crate::arch::disable_irqs();
 
     let current_time = platform::time::current_time_nanos();
 
     timer::set_timer(current_time + 10000000);
     irq::set_enable(30, true);
 
-    hal::arch::enable_irqs();
+    crate::arch::enable_irqs();
 }
 
 #[allow(dead_code)]
@@ -92,3 +93,4 @@ pub extern "C" fn rust_start_primary(cpuid: usize) {
     error!("panic here, it's ok");
     panic!("ends here");
 }
+*/

@@ -9,6 +9,7 @@ use alloc::sync::Arc;
 
 mod run_queue;
 mod task;
+// mod timer;
 
 use task::{CurrentTask, TaskInner};
 
@@ -44,7 +45,9 @@ pub fn init_scheduler() {
         || {
             info!("task 1");
 
-            loop {}
+            loop {
+                run_queue::RUN_QUEUE.lock().yield_current();
+            }
         },
         "task1".into(),
         4096,

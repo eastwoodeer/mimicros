@@ -11,6 +11,7 @@ pub fn disable_irqs() {
 }
 
 #[inline]
+#[no_mangle]
 pub fn local_irq_save() -> usize {
     let flags: usize;
     unsafe { asm!("mrs {}, daif; msr daifset, 2", out(reg) flags) };
@@ -18,6 +19,7 @@ pub fn local_irq_save() -> usize {
 }
 
 #[inline]
+#[no_mangle]
 pub fn local_irq_restore(flags: usize) {
     unsafe { asm!("msr daif, {}", in(reg) flags) };
 }

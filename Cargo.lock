@@ -43,17 +43,24 @@ name = "hal"
 version = "0.1.0"
 dependencies = [
  "aarch64-cpu",
+ "allocator",
  "cfg-if",
+ "gic",
+ "kernel_guard",
+ "lazy_init",
+ "log",
+ "logger",
  "memory_addr",
+ "page_table",
+ "page_table_entry",
+ "ratio",
+ "spinlock",
  "tock-registers",
 ]
 
 [[package]]
 name = "kernel_guard"
 version = "0.1.0"
-dependencies = [
- "hal",
-]
 
 [[package]]
 name = "lazy_init"
@@ -134,7 +141,6 @@ version = "0.1.0"
 name = "spinlock"
 version = "0.1.0"
 dependencies = [
- "hal",
  "kernel_guard",
 ]
 
@@ -148,7 +154,12 @@ dependencies = [
  "memory_addr",
  "scheduler",
  "spinlock",
+ "timer_list",
 ]
+
+[[package]]
+name = "timer_list"
+version = "0.1.0"
 
 [[package]]
 name = "tock-registers"

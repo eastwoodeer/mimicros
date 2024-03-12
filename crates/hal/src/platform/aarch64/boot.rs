@@ -12,6 +12,10 @@ static mut BOOT_PGTABLE_L0: [PTE; 512] = [PTE::empty(); 512];
 #[link_section = ".data.boot_pgtable"]
 static mut BOOT_PGTABLE_L1: [PTE; 512] = [PTE::empty(); 512];
 
+extern "C" {
+    fn rust_start_primary(cpuid: usize);
+}
+
 core::arch::global_asm!(
     include_str!("boot.s"),
     CONST_CORE_ID_MASK = const 0b11,
@@ -19,7 +23,7 @@ core::arch::global_asm!(
     init_mmu = sym init_mmu,
     switch_to_el1 = sym switch_to_el1,
     enable_fp = sym enable_fp,
-    rust_start_primary = sym crate::platform::entry::rust_start_primary);
+    rust_start_primary = sym rust_start_primary);
 
 unsafe fn init_boot_page_table() {
     crate::platform::mem::init_boot_page_table(

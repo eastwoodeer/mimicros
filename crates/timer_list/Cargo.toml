@@ -1,5 +1,5 @@
 [package]
-name = "kernel_guard"
+name = "timer_list"
 version = "0.1.0"
 edition = "2021"
 

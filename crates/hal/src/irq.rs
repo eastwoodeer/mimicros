@@ -4,5 +4,5 @@ pub fn dispatch_irq_common(irq_num: usize) {
 
     crate::platform::timer::set_timer(current_time.as_nanos() as u64 + 1000000000);
 
-    task::on_timer_tick();
+    // task::on_timer_tick();
 }

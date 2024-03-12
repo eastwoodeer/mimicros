@@ -5,6 +5,8 @@ cfg_if::cfg_if! {
         pub use self::aarch64::irq::{enable_irqs, disable_irqs};
         pub use self::aarch64::irq::{local_irq_save, local_irq_restore};
         pub use self::aarch64::cpu::{current_task_ptr, set_current_task_ptr};
+        pub use self::aarch64::{flush_tlb, write_page_table_root};
+        pub use self::aarch64::exception;
     } else {
         mod dummy;
         pub use self::dummy::TaskContext;

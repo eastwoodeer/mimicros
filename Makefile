@@ -27,7 +27,7 @@ ifeq ($(MODE), release)
 	MODE_ARG := --release
 endif
 
-export RUSTFLAGS=-Clink-arg=-Tsrc/platform/$(PLATFORM)/linker.ld --cfg=platform_family="aarch64-qemu-virt"
+export RUSTFLAGS=-Clink-arg=-Tcrates/hal/src/platform/$(PLATFORM)/linker.ld --cfg=platform_family="aarch64-qemu-virt"
 
 all: $(KERNEL_BIN)
 
