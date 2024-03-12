@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 hal = { path = "../hal" }
+kernel_guard = { path = "../kernel_guard" }

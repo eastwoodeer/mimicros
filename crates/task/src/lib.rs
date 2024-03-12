@@ -23,14 +23,14 @@ pub fn current() -> CurrentTask {
 }
 
 #[no_mangle]
-pub fn __PreemptGuard_enable_preempt() {
+pub fn __preempt_guard_enable_preempt() {
     if let Some(current) = CurrentTask::try_get() {
         current.enable_preempt();
     }
 }
 
 #[no_mangle]
-pub fn __PreemptGuard_disable_preempt() {
+pub fn __preempt_guard_disable_preempt() {
     if let Some(current) = CurrentTask::try_get() {
         current.disable_preempt();
     }

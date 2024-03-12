@@ -2,6 +2,8 @@ use aarch64_cpu::registers::{ESR_EL1, FAR_EL1, VBAR_EL1};
 use core::arch::global_asm;
 use tock_registers::interfaces::{Readable, Writeable};
 
+use kernel_guard::{PreemptGuard, Preemptable};
+
 global_asm!(include_str!("exception.s"));
 
 #[no_mangle]
@@ -16,16 +18,13 @@ fn invalid_exception(tf: u64, kind: u64, source: u64) {
     );
 }
 
-extern "Rust" {
-    fn __PreemptGuard_enable_preempt();
-    fn __PreemptGuard_disable_preempt();
-}
-
 #[no_mangle]
 fn handle_irq(_tf: u64) {
-    unsafe { __PreemptGuard_disable_preempt() }
+    // RUN_QUEUE would disable preempt, if we don't disable preempt here, reschedule would
+    // run after RUN_QUEUE unlock.
+    PreemptGuard::disable_preempt();
     crate::platform::irq::dispatch_irq();
-    unsafe { __PreemptGuard_enable_preempt() }
+    PreemptGuard::enable_preempt();
 }
 
 pub fn exception_init(vbar_el1: usize) {

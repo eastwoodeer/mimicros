@@ -8,77 +8,14 @@ use core::sync::atomic::{
     Ordering::{Acquire, Relaxed, Release},
 };
 
+use kernel_guard::{IrqProtected, IrqSaveRestore, NoOps, PreemptGuard, Preemptable};
+
 // NoPreempt, Optional(IrqSave)
 
-pub trait PreemptGuard {
-    fn enable_preempt();
-    fn disable_preempt();
-}
-
-pub trait IrqGuard {
-    type State: Copy + Clone;
-
-    fn irq_save() -> Self::State;
-    fn irq_restore(state: Self::State);
-}
-
-pub struct NoOps;
-
-impl IrqGuard for NoOps {
-    type State = ();
-
-    fn irq_save() -> Self::State {}
-    fn irq_restore(_state: Self::State) {}
-}
-
-pub struct IrqSave;
-
-impl IrqGuard for IrqSave {
-    type State = usize;
-
-    fn irq_save() -> Self::State {
-        hal::arch::local_irq_save()
-    }
-
-    fn irq_restore(state: Self::State) {
-        hal::arch::local_irq_restore(state)
-    }
-}
-
-impl PreemptGuard for NoOps {
-    fn enable_preempt() {}
-    fn disable_preempt() {}
-}
-
-impl NoOps {
-    pub const fn new() -> Self {
-        Self
-    }
-}
-
-extern "Rust" {
-    fn __PreemptGuard_enable_preempt();
-    fn __PreemptGuard_disable_preempt();
-}
-
-pub struct TaskGuard;
-
-impl PreemptGuard for TaskGuard {
-    fn enable_preempt() {
-        // task::enable_preempt()
-        unsafe { __PreemptGuard_enable_preempt() }
-    }
-
-    fn disable_preempt() {
-        // task::disable_preempt()
-        unsafe { __PreemptGuard_disable_preempt() }
-    }
-}
-
 pub type SpinLock<T> = SpinLockPrototype<T, NoOps, NoOps>;
-pub type SpinNoIrq<T> = SpinLockPrototype<T, IrqSave, TaskGuard>;
+pub type SpinNoIrq<T> = SpinLockPrototype<T, IrqSaveRestore, PreemptGuard>;
 
-pub struct SpinLockPrototype<T, G: IrqGuard, P: PreemptGuard> {
+pub struct SpinLockPrototype<T, G: IrqProtected, P: Preemptable> {
     locked: AtomicBool,
     value: UnsafeCell<T>,
     _phantom: PhantomData<(G, P)>,
@@ -93,14 +30,14 @@ pub struct SpinLockPrototype<T, G: IrqGuard, P: PreemptGuard> {
 //
 // Note: We don't need T is Sync, because SpinLock<T> will only allow one thread at a time to
 // access the T it protects.
-unsafe impl<T, G: IrqGuard, P: PreemptGuard> Sync for SpinLockPrototype<T, G, P> where T: Send {}
+unsafe impl<T, G: IrqProtected, P: Preemptable> Sync for SpinLockPrototype<T, G, P> where T: Send {}
 
-pub struct SpinGuard<'a, T, G: IrqGuard, P: PreemptGuard> {
+pub struct SpinGuard<'a, T, G: IrqProtected, P: Preemptable> {
     lock: &'a SpinLockPrototype<T, G, P>,
     irq_state: G::State,
 }
 
-impl<T, G: IrqGuard, P: PreemptGuard> SpinLockPrototype<T, G, P> {
+impl<T, G: IrqProtected, P: Preemptable> SpinLockPrototype<T, G, P> {
     pub const fn new(v: T) -> Self {
         Self {
             locked: AtomicBool::new(false),
@@ -131,20 +68,20 @@ impl<T, G: IrqGuard, P: PreemptGuard> SpinLockPrototype<T, G, P> {
     }
 }
 
-impl<T, G: IrqGuard, P: PreemptGuard> Deref for SpinGuard<'_, T, G, P> {
+impl<T, G: IrqProtected, P: Preemptable> Deref for SpinGuard<'_, T, G, P> {
     type Target = T;
     fn deref(&self) -> &Self::Target {
         unsafe { &*self.lock.value.get() }
     }
 }
 
-impl<T, G: IrqGuard, P: PreemptGuard> DerefMut for SpinGuard<'_, T, G, P> {
+impl<T, G: IrqProtected, P: Preemptable> DerefMut for SpinGuard<'_, T, G, P> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         unsafe { &mut *self.lock.value.get() }
     }
 }
 
-impl<T, G: IrqGuard, P: PreemptGuard> Drop for SpinGuard<'_, T, G, P> {
+impl<T, G: IrqProtected, P: Preemptable> Drop for SpinGuard<'_, T, G, P> {
     fn drop(&mut self) {
         self.lock.locked.store(false, Release);
         G::irq_restore(self.irq_state);

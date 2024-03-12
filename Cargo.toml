@@ -5,6 +5,7 @@ members = [
   "crates/allocator",
   "crates/gic",
   "crates/hal",
+  "crates/kernel_guard",
   "crates/lazy_init",
   "crates/linked_list",
   "crates/logger",
@@ -43,3 +44,4 @@ gic = { path = "crates/gic" }
 scheduler = { path = "crates/scheduler" }
 task = { path = "crates/task" }
 hal = { path = "crates/hal" }
+kernel_guard = { path = "crates/kernel_guard" }

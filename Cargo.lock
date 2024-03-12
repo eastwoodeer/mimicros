@@ -49,6 +49,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "kernel_guard"
+version = "0.1.0"
+dependencies = [
+ "hal",
+]
+
+[[package]]
 name = "lazy_init"
 version = "0.1.0"
 
@@ -83,6 +90,7 @@ dependencies = [
  "cfg-if",
  "gic",
  "hal",
+ "kernel_guard",
  "lazy_init",
  "log",
  "logger",
@@ -127,6 +135,7 @@ name = "spinlock"
 version = "0.1.0"
 dependencies = [
  "hal",
+ "kernel_guard",
 ]
 
 [[package]]
