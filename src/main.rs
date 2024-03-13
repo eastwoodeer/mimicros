@@ -101,4 +101,3 @@ pub extern "C" fn rust_start_primary(cpuid: usize) {
     error!("panic here, it's ok");
     panic!("ends here");
 }
-

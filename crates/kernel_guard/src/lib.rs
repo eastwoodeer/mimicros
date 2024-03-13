@@ -49,7 +49,9 @@ impl IrqProtected for IrqSaveRestore {
     }
 
     fn irq_restore(state: Self::State) {
-        unsafe { local_irq_restore(state); }
+        unsafe {
+            local_irq_restore(state);
+        }
     }
 }
 
