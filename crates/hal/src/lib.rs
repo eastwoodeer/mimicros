@@ -6,6 +6,7 @@ pub mod arch;
 pub mod irq;
 pub mod mem;
 pub mod platform;
+pub mod time;
 
 #[macro_use]
 pub mod console;

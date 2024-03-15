@@ -1,17 +1,21 @@
 use core::time::Duration;
 
+use hal::time::current_time;
 use lazy_init::LazyInit;
 use spinlock::SpinNoIrq;
-use timer_list::{TimerList, CallableEvent};
+use timer_list::{CallableEvent, TimerList};
+
 use crate::TaskRef;
 
-pub static TIMER_LIST: LazyInit<SpinNoIrq<TimerList<TaskEvent>>> = LazyInit::new();
+static TIMER_LIST: LazyInit<SpinNoIrq<TimerList<TaskEvent>>> = LazyInit::new();
 
 struct TaskEvent(TaskRef);
 
 impl CallableEvent for TaskEvent {
-    fn callback(self, now: core::time::Duration) {
-        todo!()
+    fn callback(self, _now: core::time::Duration) {
+        crate::run_queue::RUN_QUEUE
+            .lock()
+            .unblock_task(self.0, true);
     }
 }
 
@@ -21,7 +25,13 @@ pub fn add_timer(deadline: Duration, task: TaskRef) {
 
 pub fn check_event() {
     loop {
-        // let now =
+        let now = current_time();
+        let event = TIMER_LIST.lock().expire_event(now);
+        if let Some((_deadline, event)) = event {
+            event.callback(now);
+        } else {
+            break;
+        }
     }
 }
 

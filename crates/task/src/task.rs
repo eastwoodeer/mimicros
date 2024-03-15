@@ -130,8 +130,18 @@ impl TaskInner {
     }
 
     #[inline]
+    pub fn is_ready(&self) -> bool {
+        matches!(self.state(), TaskState::Ready)
+    }
+
+    #[inline]
     pub fn is_running(&self) -> bool {
         matches!(self.state(), TaskState::Running)
+    }
+
+    #[inline]
+    pub fn is_blocked(&self) -> bool {
+        matches!(self.state(), TaskState::Blocked)
     }
 
     #[inline]

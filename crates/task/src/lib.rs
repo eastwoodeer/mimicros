@@ -5,11 +5,13 @@ extern crate alloc;
 #[macro_use]
 extern crate log;
 
+use core::time::Duration;
+
 use alloc::sync::Arc;
 
 mod run_queue;
 mod task;
-// mod timer;
+mod timer;
 
 use task::{CurrentTask, TaskInner};
 
@@ -40,12 +42,16 @@ pub fn __preempt_guard_disable_preempt() {
 pub fn init_scheduler() {
     info!("init scheduler");
     run_queue::init();
+    timer::init();
 
     let task1 = TaskInner::new(
         || {
             info!("task 1");
 
             loop {
+                info!("sleep a while...");
+                run_queue::RUN_QUEUE.lock().sleep(Duration::new(0, 100000));
+                info!("waked up");
                 run_queue::RUN_QUEUE.lock().yield_current();
             }
         },
@@ -66,6 +72,7 @@ pub fn init_scheduler() {
 }
 
 pub fn on_timer_tick() {
+    timer::check_event();
     run_queue::RUN_QUEUE.lock().timer_tick();
 }
 

@@ -1,3 +1,5 @@
+use core::time::Duration;
+
 use lazy_init::LazyInit;
 use scheduler::SchedulerPrototype;
 use spinlock::SpinNoIrq;
@@ -20,7 +22,8 @@ impl RunQueue {
     }
 
     pub fn add_task(&mut self, task: TaskRef) {
-        debug!("add task: {}", task.id_name());
+        trace!("add task: {}", task.id_name());
+        assert!(task.is_ready());
         self.scheduler.add_task(task);
     }
 
@@ -36,6 +39,29 @@ impl RunQueue {
         let current = crate::current();
         trace!("task yield: {}", current.id_name());
         assert!(current.is_running());
+        self.resched(false);
+    }
+
+    pub fn unblock_task(&mut self, task: TaskRef, resched: bool) {
+        trace!("wakeup task: {}", task.id_name());
+
+        if task.is_blocked() {
+            task.set_state(TaskState::Ready);
+            self.scheduler.add_task(task);
+            if resched {
+                crate::current().set_preempt_pending(true);
+            }
+        }
+    }
+
+    pub fn sleep(&mut self, duration: Duration) {
+        let current = crate::current();
+        trace!("task sleep: {}", current.id_name());
+        assert!(current.is_running());
+
+        let deadline = hal::time::current_time() + duration;
+        crate::timer::add_timer(deadline, current.clone());
+        current.set_state(TaskState::Blocked);
         self.resched(false);
     }
 
@@ -65,8 +91,6 @@ impl RunQueue {
     }
 
     pub fn switch_to(&mut self, prev: CurrentTask, next: TaskRef) {
-        trace!("context switch: {} -> {}", prev.id_name(), next.id_name());
-
         next.set_preempt_pending(false);
         next.set_state(TaskState::Running);
 
@@ -74,6 +98,7 @@ impl RunQueue {
             return;
         }
 
+        trace!("context switch: {} -> {}", prev.id_name(), next.id_name());
         unsafe {
             let prev_ctx = prev.get_ctx_mut();
             let next_ctx = next.get_ctx_mut();

@@ -54,7 +54,7 @@ fn remap_kernel_memory() -> Result<(), PagingError> {
 fn init_interrupt() {
     hal::arch::disable_irqs();
 
-    let current_time = platform::time::current_time_nanos();
+    let current_time = hal::time::current_time_nanos();
 
     timer::set_timer(current_time + 10000000);
     irq::set_enable(30, true);
@@ -64,10 +64,10 @@ fn init_interrupt() {
 
 #[allow(dead_code)]
 fn delay(ns: u64) {
-    let now = platform::time::current_time_nanos();
+    let now = hal::time::current_time_nanos();
 
     loop {
-        if platform::time::current_time_nanos() > now + ns {
+        if hal::time::current_time_nanos() > now + ns {
             break;
         }
     }
@@ -94,6 +94,7 @@ pub extern "C" fn rust_start_primary(cpuid: usize) {
 
     platform::platform_init();
 
+    hal::irq::register_irq_common(0, task::on_timer_tick);
     task::init_scheduler();
 
     init_interrupt();
