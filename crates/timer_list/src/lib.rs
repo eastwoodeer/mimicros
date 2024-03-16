@@ -6,7 +6,7 @@ use alloc::collections::BinaryHeap;
 use core::cmp::Ordering;
 use core::time::Duration;
 
-pub trait CallableEvent {
+pub trait ScheduledEvent {
     fn callback(self, now: Duration);
 }
 
@@ -15,7 +15,7 @@ pub struct TimerEvent<E> {
     event: E,
 }
 
-pub struct TimerList<E: CallableEvent> {
+pub struct TimerList<E: ScheduledEvent> {
     events: BinaryHeap<TimerEvent<E>>,
 }
 
@@ -39,7 +39,7 @@ impl<E> PartialEq for TimerEvent<E> {
 
 impl<E> Eq for TimerEvent<E> {}
 
-impl<E: CallableEvent> TimerList<E> {
+impl<E: ScheduledEvent> TimerList<E> {
     pub fn new() -> Self {
         Self {
             events: BinaryHeap::new(),

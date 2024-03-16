@@ -1,26 +1,35 @@
+use alloc::sync::Arc;
 use core::time::Duration;
 
 use hal::time::current_time;
 use lazy_init::LazyInit;
 use spinlock::SpinNoIrq;
-use timer_list::{CallableEvent, TimerList};
+use timer_list::{ScheduledEvent, TimerList};
 
-use crate::TaskRef;
+use crate::{run_queue::RUN_QUEUE, TaskRef};
 
-static TIMER_LIST: LazyInit<SpinNoIrq<TimerList<TaskEvent>>> = LazyInit::new();
+static TIMER_LIST: LazyInit<SpinNoIrq<TimerList<ScheduledTaskEvent>>> = LazyInit::new();
 
-struct TaskEvent(TaskRef);
+struct ScheduledTaskEvent(TaskRef);
 
-impl CallableEvent for TaskEvent {
+impl ScheduledEvent for ScheduledTaskEvent {
     fn callback(self, _now: core::time::Duration) {
-        crate::run_queue::RUN_QUEUE
-            .lock()
-            .unblock_task(self.0, true);
+        let mut rq = RUN_QUEUE.lock();
+        self.0.set_in_timer_list(false);
+        rq.unblock_task(self.0, true);
     }
 }
 
 pub fn add_timer(deadline: Duration, task: TaskRef) {
-    TIMER_LIST.lock().add(deadline, TaskEvent(task));
+    let mut timer = TIMER_LIST.lock();
+    task.set_in_timer_list(true);
+    timer.add(deadline, ScheduledTaskEvent(task));
+}
+
+pub fn delete_timer(task: &TaskRef) {
+    let mut timer = TIMER_LIST.lock();
+    task.set_in_timer_list(false);
+    timer.cancel(|t| Arc::ptr_eq(&t.0, task));
 }
 
 pub fn check_event() {

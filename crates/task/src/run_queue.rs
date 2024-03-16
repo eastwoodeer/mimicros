@@ -12,7 +12,7 @@ pub struct RunQueue {
 }
 
 // Single global Run-queue
-pub static RUN_QUEUE: LazyInit<SpinNoIrq<RunQueue>> = LazyInit::new();
+pub(crate) static RUN_QUEUE: LazyInit<SpinNoIrq<RunQueue>> = LazyInit::new();
 
 impl RunQueue {
     pub fn new() -> SpinNoIrq<Self> {
@@ -39,6 +39,22 @@ impl RunQueue {
         let current = crate::current();
         trace!("task yield: {}", current.id_name());
         assert!(current.is_running());
+        self.resched(false);
+    }
+
+    pub fn block_current<F>(&mut self, push_to_wait_queue: F)
+    where
+        F: FnOnce(TaskRef),
+    {
+        let current = crate::current();
+        trace!("block task: {}", current.id_name());
+
+        assert!(current.is_running());
+        // preempt should be enabled
+        assert!(current.can_preempt(1));
+
+        current.set_state(TaskState::Blocked);
+        push_to_wait_queue(current.clone());
         self.resched(false);
     }
 

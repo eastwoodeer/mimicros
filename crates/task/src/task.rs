@@ -73,6 +73,8 @@ pub struct TaskInner {
     is_init: bool,
     need_resched: AtomicBool,
     preempt_disable_count: AtomicUsize,
+    in_wait_queue: AtomicBool,
+    in_timer_list: AtomicBool,
     stack: Option<TaskStack>,
     ctx: UnsafeCell<TaskContext>,
     entry: Option<*mut dyn FnOnce() -> usize>,
@@ -90,6 +92,8 @@ impl TaskInner {
             is_init: false,
             need_resched: AtomicBool::new(false),
             preempt_disable_count: AtomicUsize::new(0),
+            in_wait_queue: AtomicBool::new(false),
+            in_timer_list: AtomicBool::new(false),
             stack: None,
             ctx: UnsafeCell::new(TaskContext::new()),
             entry: None,
@@ -174,6 +178,26 @@ impl TaskInner {
     #[inline]
     pub fn can_preempt(&self, count: usize) -> bool {
         self.preempt_disable_count.load(Ordering::Acquire) == count
+    }
+
+    #[inline]
+    pub fn set_in_timer_list(&self, v: bool) {
+        self.in_timer_list.store(v, Ordering::Release);
+    }
+
+    #[inline]
+    pub fn in_timer_list(&self) -> bool {
+        self.in_timer_list.load(Ordering::Acquire)
+    }
+
+    #[inline]
+    pub fn set_in_wait_queue(&self, v: bool) {
+        self.in_wait_queue.store(v, Ordering::Release);
+    }
+
+    #[inline]
+    pub fn in_wait_queue(&self) -> bool {
+        self.in_wait_queue.load(Ordering::Acquire)
     }
 
     pub fn check_preempt_pending() {

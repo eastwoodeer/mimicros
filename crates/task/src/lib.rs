@@ -12,6 +12,7 @@ use alloc::sync::Arc;
 mod run_queue;
 mod task;
 mod timer;
+mod wait_queue;
 
 use task::{CurrentTask, TaskInner};
 
