@@ -134,6 +134,11 @@ impl TaskInner {
     }
 
     #[inline]
+    pub fn is_init(&self) -> bool {
+        self.is_init
+    }
+
+    #[inline]
     pub fn is_ready(&self) -> bool {
         matches!(self.state(), TaskState::Ready)
     }

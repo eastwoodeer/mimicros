@@ -58,6 +58,23 @@ impl RunQueue {
         self.resched(false);
     }
 
+    pub fn exit_current(&mut self, exit_code: i32) -> ! {
+        let current = crate::current();
+        trace!("task exit: {}", current.id_name());
+
+        assert!(current.is_running());
+
+        if current.is_init() {
+            // exit machine.
+            panic!("halt machine!");
+        }
+
+        current.set_state(TaskState::Existed);
+        self.resched(false);
+
+        unreachable!("task exited");
+    }
+
     pub fn unblock_task(&mut self, task: TaskRef, resched: bool) {
         trace!("wakeup task: {}", task.id_name());
 

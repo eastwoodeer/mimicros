@@ -53,7 +53,7 @@ pub fn init_scheduler() {
                 info!("sleep a while...");
                 run_queue::RUN_QUEUE.lock().sleep(Duration::new(0, 100000));
                 info!("waked up");
-                run_queue::RUN_QUEUE.lock().yield_current();
+                run_queue::RUN_QUEUE.lock().exit_current(0);
             }
         },
         "task1".into(),
