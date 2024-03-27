@@ -12,6 +12,7 @@ members = [
   "crates/memory_addr",
   "crates/page_table",
   "crates/page_table_entry",
+  "crates/percpu",
   "crates/ratio",
   "crates/scheduler",
   "crates/spinlock",

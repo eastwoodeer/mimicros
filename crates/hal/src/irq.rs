@@ -9,7 +9,7 @@ const PERIODIC_INTERVAL_NANOS: u64 = NANOS_PER_SEC / TICKS_PER_SEC;
 
 pub fn dispatch_irq_common(irq_num: usize) {
     let current_time = crate::time::current_time();
-    trace!("[{}] handle irq... {}", current_time.as_nanos(), irq_num);
+    // trace!("[{}] handle irq... {}", current_time.as_nanos(), irq_num);
 
     let mut deadline = unsafe { NEXT_DEADLINE };
     let now = crate::time::current_time_nanos();
