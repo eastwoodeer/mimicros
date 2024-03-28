@@ -14,6 +14,9 @@ use page_table_entry::MemoryAttribute;
 
 use hal::platform::{self, irq, timer};
 
+#[percpu::define_per_cpu]
+static EXAMPLE_TEST: usize = 0;
+
 extern "C" {
     fn exception_vector_base();
 }

@@ -13,6 +13,7 @@ members = [
   "crates/page_table",
   "crates/page_table_entry",
   "crates/percpu",
+  "crates/percpu/percpu_macro",
   "crates/ratio",
   "crates/scheduler",
   "crates/spinlock",
@@ -47,3 +48,4 @@ scheduler = { path = "crates/scheduler" }
 task = { path = "crates/task" }
 hal = { path = "crates/hal" }
 kernel_guard = { path = "crates/kernel_guard" }
+percpu = { path = "crates/percpu" }

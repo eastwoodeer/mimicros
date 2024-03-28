@@ -66,3 +66,16 @@ impl Preemptable for PreemptGuard {
         unsafe { __preempt_guard_disable_preempt() }
     }
 }
+
+impl PreemptGuard {
+    pub fn new() -> Self {
+        Self::enable_preempt();
+        Self
+    }
+}
+
+impl Drop for PreemptGuard {
+    fn drop(&mut self) {
+        Self::disable_preempt();
+    }
+}

@@ -104,6 +104,7 @@ dependencies = [
  "memory_addr",
  "page_table",
  "page_table_entry",
+ "percpu",
  "ratio",
  "scheduler",
  "spinlock",
@@ -130,7 +131,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "percpu_macros"
+name = "percpu"
+version = "0.1.0"
+dependencies = [
+ "kernel_guard",
+ "percpu_macro",
+]
+
+[[package]]
+name = "percpu_macro"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",

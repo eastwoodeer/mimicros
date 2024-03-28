@@ -48,6 +48,21 @@ SECTIONS {
         *(.data*)
     }
 
+    . = ALIGN(4K);
+	_per_cpu_start = .;
+	.per_cpu : AT(_per_cpu_start) {
+	    _per_cpu_load_start = .;
+		*(.per_cpu .per_cpu.*)
+		_per_cpu_load_end = .;
+		. = ALIGN(64);
+		_per_cpu_size_align_end = .;
+
+        . = _per_cpu_load_start + _per_cpu_size_align_end * 4; /* 4 cores */
+	}
+	. = _per_cpu_start + SIZEOF(.per_cpu);
+	_per_cpu_end = .;
+
+
     .bss (NOLOAD) : ALIGN(16)
     {
         __bss_start = .;
